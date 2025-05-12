@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  app-web:
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+    command: npm run dev
+    ports: 
+      - 3000:3000
+
+networks:
+  yugabyte-net:
