@@ -1,0 +1,78 @@
+'use client'
+import React from "react";
+
+export default function ProductCard({ product }) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="h-56 w-full">
+        {/* IMAGE */}
+        <a href="#">
+          <img className="mx-auto hidden h-full dark:block" src={product.image} alt={product.name} />
+        </a>
+      </div>
+
+
+      <div className="pt-6">
+
+        <a href="#" className="text-lg font-semibold leading-tight text-gray-900 hover:underline">{product.name}</a>
+
+        {/* DESCRIPTION */}
+        <div className="mt-2 flex items-center gap-4">
+          <a href="#" className="flex items-center gap-2 text-sm font-medium text-gray-500">{product.description}</a>
+        </div>
+
+
+        <div className="mt-4 flex items-center justify-between gap-4">
+          {/* PRICE */}
+          <p className="text-2xl font-extrabold leading-tight text-gray-900">${product.price}</p>
+
+          {/* BUTTONS */}
+          <div className="flex items-center justify-end gap-1">
+            <button
+              type="button"
+              data-tooltip-target={`tooltip-edit-${product.id}`}
+              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            >
+              <span className="sr-only">Editar</span>
+              {/* Pencil SVG */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+              </svg>
+
+
+            </button>
+            <div
+              id={`tooltip-edit-${product.id}`}
+              role="tooltip"
+              className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
+              data-popper-placement="top"
+            >
+              Editar
+              <div className="tooltip-arrow" data-popper-arrow=""></div>
+            </div>
+
+            <button
+              type="button"
+              data-tooltip-target={`tooltip-delete-${product.id}`}
+              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            >
+              <span className="sr-only">Borrar</span>
+              <svg className="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM3 5h18M19 7l-.866 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7h14Z" />
+              </svg>
+            </button>
+            <div
+              id={`tooltip-delete-${product.id}`}
+              role="tooltip"
+              className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700"
+              data-popper-placement="top"
+            >
+              Delete
+              <div className="tooltip-arrow" data-popper-arrow=""></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
