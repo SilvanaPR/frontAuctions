@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialState = {
   products: [],
-  categories: []
+  categories: [],
+  currentProduct: {}
 }
 
 interface Product {
@@ -40,11 +41,15 @@ export const productSlice = createSlice({
     },
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload]
+    },
+    getCurrentProduct: (state, action: PayloadAction<number>) => {
+      const cur: number = state.products.length + 2
+      state.currentProduct = { id: cur, description: `test ${cur}`, price: 100, name: "Camisa de Coleccion", category: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' }
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { getProducts, getCategories, addProduct } = productSlice.actions
+export const { getProducts, getCategories, addProduct, getCurrentProduct } = productSlice.actions
 
 export default productSlice.reducer
