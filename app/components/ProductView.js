@@ -2,13 +2,12 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, getCategories} from "../../lib/features/product/productSlice";
+import { addProduct, getCategories } from "../../lib/features/product/productSlice";
 
 export default function ProductView(props) {
   const [imageFile, setImageFile] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const dispatch = useDispatch();
-
   const categories = useSelector((state) => state.product.categories)
 
   const [formData, setFormData] = useState({
@@ -24,6 +23,11 @@ export default function ProductView(props) {
 
     if (props.product?.id) {
       setFormData(props.product)
+      setSelectedCategory(formData.category)
+      console.log("formdata")
+      console.log(formData.category)
+      console.log("category")
+      console.log(selectedCategory)
     }
   }, [props.product]);
 
@@ -37,7 +41,7 @@ export default function ProductView(props) {
 
   const convertToBase64 = () => {
     const reader = new FileReader()
-/
+
     reader.readAsDataURL(imageFile)
 
     reader.onload = () => {
@@ -62,12 +66,13 @@ export default function ProductView(props) {
     setSelectedCategory(selectedCategoryObject);
     setFormData(prev => ({
       ...prev,
-      category: selectedCategoryObject ? selectedCategoryObject.name : '',
+      category: selectedCategoryObject ? selectedCategoryObject.id : '',
     }));
   };
 
   return (
     <div className="items-center justify-center h-screen w-full">
+      <h1>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</h1>
       <section>
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 bg-white rounded-lg shadow">
           <h2 className="mb-4 text-xl font-bold text-gray-900">Registrar Producto Nuevo</h2>

@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: ./.docker/Dockerfile
     command: npm run dev
-    ports: 
+    ports:
       - 3000:3000
-
-networks:
-  yugabyte-net:
+    volumes:
+      - .:/app
+      - /app/node_modules
