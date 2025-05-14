@@ -5,14 +5,16 @@ import { getCurrentProduct } from "../../../lib/features/product/productSlice";
 
 import ProductView from "../../components/ProductView";
 
-export default function Manage({params}) {
+export default function Manage({ params }) {
   const dispatch = useDispatch();
+  const { id } = React.use(params);
+
 
   const currentProduct = useSelector((state) => state.product.currentProduct)
 
   useEffect(() => {
-    dispatch(getCurrentProduct(params.id))
+    dispatch(getCurrentProduct(id))
   }, []);
 
-  return <ProductView product={currentProduct}/>
+  return <ProductView product={currentProduct} />
 }

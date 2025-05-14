@@ -1,19 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function ImageReader({ onImageChange }) {
+export default function ImageReader({ onImageChange, imagePreview }) {
   const [preview, setPreview] = useState(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
       setPreview(URL.createObjectURL(file));
-      onImageChange(file); 
+      onImageChange(file);
     } else {
       setPreview(null);
       onImageChange(null);
     }
   };
+
+  useEffect(() => {
+    if (imagePreview) {
+      setPreview(imagePreview)
+    }
+  }, [imagePreview]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">

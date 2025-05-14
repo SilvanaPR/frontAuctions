@@ -45,11 +45,20 @@ export const productSlice = createSlice({
     getCurrentProduct: (state, action: PayloadAction<number>) => {
       const cur: number = state.products.length + 2
       state.currentProduct = { id: cur, description: `test ${cur}`, price: 100, name: "Camisa de Coleccion", category: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' }
+    },
+    deleteProduct: (state, action: PayloadAction<Product>) => {
+      state.products = state.products.filter(product => product.id !== action.payload.id);
+    },
+    modifyProduct: (state, action: PayloadAction<Product>) => {
+      const index = state.products.findIndex(product => product.id === action.payload.id);
+      if (index !== -1) {
+        state.products[index] = action.payload;
+      }
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { getProducts, getCategories, addProduct, getCurrentProduct } = productSlice.actions
+export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct } = productSlice.actions
 
 export default productSlice.reducer

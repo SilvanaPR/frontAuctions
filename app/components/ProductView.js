@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, getCategories } from "../../lib/features/product/productSlice";
+import { addProduct, getCategories, modifyProduct } from "../../lib/features/product/productSlice";
+import Link from "next/link";
 
 export default function ProductView(props) {
   const [imageFile, setImageFile] = useState(null);
@@ -23,11 +24,8 @@ export default function ProductView(props) {
 
     if (props.product?.id) {
       setFormData(props.product)
-      setSelectedCategory(formData.category)
-      console.log("formdata")
-      console.log(formData.category)
-      console.log("category")
-      console.log(selectedCategory)
+      setSelectedCategory(props.product.category)
+      setImageFile(props.product.image)
     }
   }, [props.product]);
 
@@ -47,7 +45,6 @@ export default function ProductView(props) {
     reader.onload = () => {
       console.log('called: ', reader)
       handleChange({ target: { name: "image", value: reader.result } })
-      console.log(formData)
     }
   }
 
@@ -55,7 +52,14 @@ export default function ProductView(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(addProduct(formData));
+    if (props.product?.id) {
+      dispatch(modifyProduct(formData));
+      console.log("modifica");
+
+    } else {
+      dispatch(addProduct(formData));
+    }
+
     console.log("Form data:", formData);
     console.log("Image:", convertToBase64());
   };
@@ -74,6 +78,14 @@ export default function ProductView(props) {
     <div className="items-center justify-center h-screen w-full">
       <section>
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 bg-white rounded-lg shadow">
+          <div className="place-content-end">
+            <Link href={`/Product`} className="pt-3 lg:inline-flex mt-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+              </svg>
+            </Link>
+          </div>
+
           <h2 className="mb-4 text-xl font-bold text-gray-900">Registrar Producto Nuevo</h2>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -96,7 +108,7 @@ export default function ProductView(props) {
                   id="category"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   name="category"
-                  value={selectedCategory ? selectedCategory.id : ''}
+                  value={selectedCategory || ''}
                   onChange={handleCategoryChange}
                 >
                   <option value="">Selecciona una categoría</option>
@@ -134,14 +146,16 @@ export default function ProductView(props) {
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
-                <ImageReader onImageChange={setImageFile} />
+                <ImageReader onImageChange={setImageFile} imagePreview={imageFile} />
               </div>
             </div>
+
             <button
               type="submit"
               className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200">
-              Agregar Producto
+              {`${props.product ? 'Modificar' : 'Agregar'} Producto`}
             </button>
+
           </form>
         </div>
       </section>

@@ -9,7 +9,7 @@ export default function Product() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-     dispatch(getProducts())
+    dispatch(getProducts())
   }, []);
 
   return (
