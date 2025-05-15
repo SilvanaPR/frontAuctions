@@ -4,12 +4,18 @@ import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
 import { addProduct, getCategories, modifyProduct } from "../../lib/features/product/productSlice";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import NotificationCard from "../components/NotificationCard";
 
 export default function ProductView(props) {
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFileBase64, setImageFileBase64] = useState('');
+  const [imageFileRaw, setImageFileRaw] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const dispatch = useDispatch();
-  const categories = useSelector((state) => state.product.categories)
+  const categories = useSelector((state) => state.product.categories);
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -20,14 +26,14 @@ export default function ProductView(props) {
   });
 
   useEffect(() => {
-    dispatch(getCategories())
+    dispatch(getCategories());
 
     if (props.product?.id) {
-      setFormData(props.product)
-      setSelectedCategory(props.product.category)
-      setImageFile(props.product.image)
+      setFormData(props.product);
+      setSelectedCategory(props.product.category);
+      setImageFileBase64(props.product.image);
     }
-  }, [props.product]);
+  }, [props.product, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,40 +44,88 @@ export default function ProductView(props) {
   };
 
   const convertToBase64 = () => {
-    const reader = new FileReader()
+    return new Promise((resolve, reject) => {
+      if (!imageFileRaw) {
+        resolve('');
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFileRaw);
+      reader.onload = () => {
+        handleChange({ target: { name: "image", value: reader.result } });
+        resolve(reader.result);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
-    reader.readAsDataURL(imageFile)
-
-    reader.onload = () => {
-      console.log('called: ', reader)
-      handleChange({ target: { name: "image", value: reader.result } })
-    }
-  }
-
-  useEffect(() => { console.log(formData) }, [formData.image])
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (props.product?.id) {
-      dispatch(modifyProduct(formData));
-      console.log("modifica");
+    setIsSubmitting(true);
+    setNotification(null);
 
-    } else {
-      dispatch(addProduct(formData));
+    if (!selectedCategory) {
+      setIsSubmitting(false);
+      return;
     }
 
-    console.log("Form data:", formData);
-    console.log("Image:", convertToBase64());
+    let base64Image = '';
+    try {
+      base64Image = await convertToBase64();
+      if (base64Image === '' && !formData.image && !props.product?.image) {
+        setIsSubmitting(false);
+        setNotification({ title: "Error", text: "Por favor, carga una imagen", type: "danger" });
+        return;
+      }
+
+      const finalFormData = { ...formData, category: selectedCategory.id };
+
+      if (props.product?.id) {
+        await dispatch(modifyProduct(finalFormData));
+        console.log("Producto modificado:", finalFormData);
+        setNotification({ title: "Éxito", text: "Producto modificado exitosamente", type: "success" });
+      } else {
+        await dispatch(addProduct(finalFormData));
+        console.log("Producto agregado:", finalFormData);
+        setNotification({ title: "Éxito", text: "Producto agregado exitosamente", type: "success" });
+      }
+
+
+      setTimeout(() => {
+        //router.push('/Product');
+      }, 1500);
+
+    } catch (error) {
+      console.error("Error al guardar el producto:", error);
+      setNotification({ title: "Error", text: "Hubo un error al guardar el producto.", type: "danger" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCategoryChange = (e) => {
     const selectedId = parseInt(e.target.value);
-    const selectedCategoryObject = categories.find(cat => cat.id === selectedId);
-    setSelectedCategory(selectedCategoryObject);
+    const categoryObject = categories.find(cat => cat.id === selectedId);
+    setSelectedCategory(categoryObject);
     setFormData(prev => ({
       ...prev,
-      category: selectedCategoryObject ? selectedCategoryObject.id : '',
+      category: categoryObject ? categoryObject.id : '',
     }));
+  };
+
+  const handleImageChange = (file) => {
+    setImageFileRaw(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageFileBase64(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImageFileBase64('');
+    }
   };
 
   return (
@@ -80,15 +134,21 @@ export default function ProductView(props) {
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 bg-white rounded-lg shadow">
           <div className="place-content-end">
             <Link href={`/Product`} className="pt-3 lg:inline-flex mt-auto mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
               </svg>
             </Link>
           </div>
 
-          <h2 className="mb-4 text-xl font-bold text-gray-900">Registrar Producto Nuevo</h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">{props.product?.id ? 'Modificar Producto' : 'Registrar Producto Nuevo'}</h2>
+
+          {notification && (
+            <NotificationCard title={notification.title} text={notification.text} type={notification.type} />
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+              {/* ... Campos del formulario ... */}
               <div className="sm:col-span-2">
                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Nombre del Producto</label>
                 <input
@@ -108,8 +168,9 @@ export default function ProductView(props) {
                   id="category"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   name="category"
-                  value={selectedCategory || ''}
+                  value={selectedCategory?.id || ''}
                   onChange={handleCategoryChange}
+                  required
                 >
                   <option value="">Selecciona una categoría</option>
                   {categories.map((cat) => (
@@ -140,22 +201,24 @@ export default function ProductView(props) {
                   rows="8"
                   className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
                   placeholder="Ingresa una descripción del producto"
+                  required
                   value={formData.description}
                   onChange={handleChange}
                 ></textarea>
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
-                <ImageReader onImageChange={setImageFile} imagePreview={imageFile} />
+                <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
               </div>
             </div>
 
             <button
               type="submit"
-              className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200">
-              {`${props.product ? 'Modificar' : 'Agregar'} Producto`}
+              className={`inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Guardando...' : `${props.product ? 'Modificar' : 'Agregar'} Producto`}
             </button>
-
           </form>
         </div>
       </section>

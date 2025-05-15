@@ -3,7 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 const initialState = {
   products: [],
   categories: [],
-  currentProduct: {}
+  currentProduct: {},
+  currentCategory: {}
 }
 
 interface Product {
@@ -39,6 +40,10 @@ export const productSlice = createSlice({
         { id: 6, name: "juegos" },
       ]
     },
+    getCurrentCategory: (state, action: PayloadAction<number>) => {
+      const cur: number = state.categories.length + 1
+      state.currentCategory = { id: cur, name: "juegos" }
+    },
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload]
     },
@@ -59,6 +64,6 @@ export const productSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct } = productSlice.actions
+export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct, getCurrentCategory } = productSlice.actions
 
 export default productSlice.reducer

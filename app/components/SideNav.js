@@ -6,6 +6,7 @@ import Image from "next/image";
 export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [showProductSubmenu, setShowProductSubmenu] = useState(false);
+  const [showAuctionSubmenu, setShowAuctionSubmenu] = useState(false);
   const sidebar = useRef(null);
 
   useEffect(() => {
@@ -21,9 +22,8 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
       {/* Sidebar backdrop */}
       <div
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className={`fixed inset-0 border-r border-gray-200 sm:translate-x-0 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 border-r border-gray-200 sm:translate-x-0 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         aria-hidden="true"
       ></div>
 
@@ -31,16 +31,14 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
       <div
         id="sidebar"
         ref={sidebar}
-        className={`fixed flex flex-col z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar lg:w-64 w-72 bg-white lg:sidebar-expanded:w-20 shrink-0 border-r border-gray-200 sm:translate-x-0 p-4 transition-all duration-200 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-72"
-        }`}
+        className={`fixed flex flex-col z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar lg:w-64 w-72 bg-white lg:sidebar-expanded:w-20 shrink-0 border-r border-gray-200 sm:translate-x-0 p-4 transition-all duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-72"
+          }`}
       >
         <div className="flex justify-between pr-3 sm:px-2">
           <Link href="/">
             <span
-              className={`${
-                sidebarExpanded ? "lg:hidden" : "block"
-              } welcome-step text-2xl font-medium tracking-tighter text-black focus:outline-none focus:ring whitespace-nowrap cursor-pointer`}
+              className={`${sidebarExpanded ? "lg:hidden" : "block"
+                } welcome-step text-2xl font-medium tracking-tighter text-black focus:outline-none focus:ring whitespace-nowrap cursor-pointer`}
             >
               <Image
                 className="mt-2 mb-8 h-100 w-32"
@@ -54,9 +52,8 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
 
           <Link href="/">
             <Image
-              className={`${
-                !sidebarExpanded ? "lg:hidden" : "block"
-              } mt-1 mb-8 h-8 w-8`}
+              className={`${!sidebarExpanded ? "lg:hidden" : "block"
+                } mt-1 mb-8 h-8 w-8`}
               src="/clickbid logo.jpg"
               height={100}
               width={100}
@@ -68,13 +65,13 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
         {/* Links */}
         <div className="space-y-4">
           <p
-            className={`${
-              sidebarExpanded ? "lg:hidden" : "block"
-            } px-2 text-xs font-base text-gray-400 uppercase`}
+            className={`${sidebarExpanded ? "lg:hidden" : "block"
+              } px-2 text-xs font-base text-gray-400 uppercase`}
           >
             Actions
           </p>
           <ul className="space-y-2">
+            {/* PRODUCTS */}
             <li>
               <button
                 onClick={() => setShowProductSubmenu(!showProductSubmenu)}
@@ -90,7 +87,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                   Productos
                 </span>
 
-                
+
                 <span className="ml-auto">
                   {!sidebarExpanded && (
                     <svg
@@ -120,11 +117,10 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                     >
                       <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
                         <span
-                          className={`${
-                            sidebarExpanded
-                              ? "lg:hidden opacity-0 ml-0"
-                              : "opacity-100 block"
-                          }ml-3 whitespace-nowrap `}
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
                         >
                           Listado de Productos
                         </span>
@@ -140,13 +136,89 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                     >
                       <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
                         <span
-                          className={`${
-                            sidebarExpanded
-                              ? "lg:hidden opacity-0 ml-0"
-                              : "opacity-100 block"
-                          }ml-3 whitespace-nowrap `}
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
                         >
-                          Crear Producto
+                          Registrar Nuevo Producto
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            {/* AUCTIONS */}
+            <li>
+              <button
+                onClick={() => setShowAuctionSubmenu(!showAuctionSubmenu)}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-gavel"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385" /><path d="M6 9l4 4" /><path d="M13 10l-4 -4" /><path d="M3 21h7" /><path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z" /></svg>
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Subastas
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={showAuctionSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                      />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showAuctionSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Auction"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Listado de Subastas
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Auction/Create"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Crear Subasta
                         </span>
                       </span>
                     </Link>
@@ -164,9 +236,8 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             <button onClick={() => setSidebarExpanded(!sidebarExpanded)}>
               <span className="sr-only">Expand / collapse sidebar</span>
               <svg
-                className={`w-6 h-6 hidden lg:block fill-current ${
-                  !sidebarExpanded ? "rotate-0" : "rotate-180"
-                }`}
+                className={`w-6 h-6 hidden lg:block fill-current ${!sidebarExpanded ? "rotate-0" : "rotate-180"
+                  }`}
                 viewBox="0 0 24 24"
               >
                 <path
