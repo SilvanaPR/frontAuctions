@@ -18,7 +18,7 @@ export default function ProductCard({ product }) {
       <div className="h-56 w-full">
         {/* IMAGE */}
         <a href="#">
-          <img className="mx-auto hidden h-full dark:block" src={product.image} alt={product.name} />
+          <img className="mx-auto hidden h-full" src={product.image} alt={product.name} />
         </a>
       </div>
 
@@ -31,9 +31,10 @@ export default function ProductCard({ product }) {
         <a href="#" className="text-lg font-semibold leading-tight text-gray-900 hover:underline">{product.name}</a>
 
         {/* DESCRIPTION */}
-        <div className="mt-2 flex items-center gap-4">
-          <a href="#" className="flex items-center gap-2 text-sm font-medium text-gray-500">{product.description}</a>
+        <div className="mt-2 text-sm font-medium text-gray-500 break-words">
+          {product.description}
         </div>
+
 
 
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -43,7 +44,7 @@ export default function ProductCard({ product }) {
           {/* BUTTONS */}
 
           <div className="flex items-center justify-end gap-1">
-            <Link href={`/Product/${product.id}`} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <Link href={`/Product/${product.id}`} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
               </svg>
@@ -52,7 +53,7 @@ export default function ProductCard({ product }) {
             <button
               type="button"
               id={`Delete-${product.id}`}
-              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
               onClick={handleDelete}
             >
               <span className="sr-only">Borrar</span>

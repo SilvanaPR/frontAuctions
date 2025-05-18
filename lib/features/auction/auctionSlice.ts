@@ -7,15 +7,15 @@ const initialState = {
 
 interface Auction {
     name: string,
-    basePrice: number,
-    description: string,
     image: string,
+    basePrice: number,
+    resPrice: number,
+    description: string,
     initDate: Date,
     endDate: Date,
     conditions: string,
     minIncrement: number,
-    resPrice: number,
-    state: string,
+    state?: string,
     id?: number
 }
 
@@ -33,10 +33,13 @@ export const auctionSlice = createSlice({
                 { name: "Lote de Monedas Antiguas", basePrice: 50, description: "Colección de diez monedas antiguas de diferentes países y épocas.", image: "monedas_antiguas.jpg", initDate: "2025-05-24T16:00:00-04:00", endDate: "2025-05-31T21:00:00-04:00", conditions: "Se venden como lote. La autenticidad de cada moneda no ha sido verificada por un experto.", minIncrement: 3, resPrice: 80, state: "activo", id: 5 }
             ]
         },
+        addAuction: (state, action: PayloadAction<Auction>) => {
+            state.auctions = [...state.auctions, action.payload]
+        },
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { getAuctions } = auctionSlice.actions
+export const { getAuctions, addAuction } = auctionSlice.actions
 
 export default auctionSlice.reducer

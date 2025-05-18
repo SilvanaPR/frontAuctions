@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, getCategories, modifyProduct } from "../../lib/features/auction/auctionSlice";
+import { addAuction, modifyProduct } from "../../lib/features/auction/auctionSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import NotificationCard from "../components/NotificationCard";
@@ -15,6 +15,7 @@ export default function AuctionView(props) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [notification, setNotification] = useState(null);
+    const datepickerRef = useRef(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -25,15 +26,38 @@ export default function AuctionView(props) {
         endDate: '',
         conditions: '',
         minIncrement: '',
-        resPrice: ''
+        resPrice: '',
+        initHour: '00:00',
+        endHour: '00:00',
     });
 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const initDateEl = document.getElementById("initdate");
+            if (initDateEl) {
+                const datepicker = new Datepicker(initDateEl);
+                const onChange = (event) => {
+                    setFormData(prev => ({ ...prev, initDate: event.target.value }));
+                };
+                initDateEl.addEventListener('changeDate', onChange);
+                return () => initDateEl.removeEventListener('changeDate', onChange);
+            }
+        }
+    }, []);
 
-    // useEffect(() => {
-    //     const datepickerEl = document.getElementById('datepicker-input');
-    //     new Datepicker(datepickerEl);
-    // }, []);
-
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const endDateEl = document.getElementById("endDate");
+            if (endDateEl) {
+                const datepicker = new Datepicker(endDateEl);
+                const onChange = (event) => {
+                    setFormData(prev => ({ ...prev, endDate: event.target.value }));
+                };
+                endDateEl.addEventListener('changeDate', onChange);
+                return () => endDateEl.removeEventListener('changeDate', onChange);
+            }
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,62 +87,43 @@ export default function AuctionView(props) {
 
 
     const handleSubmit = async (event) => {
-        console.log("hols ")
-        /*
         event.preventDefault();
         setIsSubmitting(true);
         setNotification(null);
- 
-        if (!selectedCategory) {
-            setIsSubmitting(false);
-            return;
-        }
- 
-        let base64Image = '';
+
         try {
-            base64Image = await convertToBase64();
-            if (base64Image === '' && !formData.image && !props.product?.image) {
+            const base64Image = await convertToBase64();
+            if (!base64Image && !formData.image && !props.auction?.image) {
                 setIsSubmitting(false);
                 setNotification({ title: "Error", text: "Por favor, carga una imagen", type: "danger" });
                 return;
             }
- 
-            const finalFormData = { ...formData, category: selectedCategory.id };
- 
-            if (props.product?.id) {
-                await dispatch(modifyProduct(finalFormData));
-                console.log("Producto modificado:", finalFormData);
-                setNotification({ title: "Éxito", text: "Producto modificado exitosamente", type: "success" });
+
+            const finalData = {
+                ...formData,
+                image: base64Image || formData.image || props.auction?.image || ''
+            };
+
+            if (props.auction?.id) {
+                // await dispatch(modifyProduct(finalData));
             } else {
-                await dispatch(addProduct(finalFormData));
-                console.log("Producto agregado:", finalFormData);
-                setNotification({ title: "Éxito", text: "Producto agregado exitosamente", type: "success" });
+                await dispatch(addAuction(finalData));
+                console.log("Subasta agregada:", finalData);
+                setNotification({ title: "Éxito", text: "Subasta agregada exitosamente", type: "success" });
             }
- 
- 
+
             setTimeout(() => {
-                //router.push('/Product');
+                // router.push('/Product');
             }, 1500);
- 
+
         } catch (error) {
-            console.error("Error al guardar el producto:", error);
-            setNotification({ title: "Error", text: "Hubo un error al guardar el producto.", type: "danger" });
+            console.error("Error al guardar la subasta:", error);
+            setNotification({ title: "Error", text: "Hubo un error al guardar la subasta.", type: "danger" });
         } finally {
             setIsSubmitting(false);
         }
-            */
     };
-    /*
-        const handleCategoryChange = (e) => {
-            const selectedId = parseInt(e.target.value);
-            const categoryObject = categories.find(cat => cat.id === selectedId);
-            setSelectedCategory(categoryObject);
-            setFormData(prev => ({
-                ...prev,
-                category: categoryObject ? categoryObject.id : '',
-            }));
-        };
-    */
+
 
     const handleImageChange = (file) => {
         setImageFileRaw(file);
@@ -153,6 +158,7 @@ export default function AuctionView(props) {
 
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                            {/* NAME */}
                             <div className="w-full">
                                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Nombre de la Subasta</label>
                                 <input
@@ -166,6 +172,7 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 />
                             </div>
+                            {/* BASE PRICE */}
                             <div className="w-full">
                                 <label htmlFor="basePrice" className="block mb-2 text-sm font-medium text-gray-900">Precio Base</label>
                                 <input
@@ -179,6 +186,7 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 />
                             </div>
+                            {/* MIN INCREMENT */}
                             <div className="w-full">
                                 <label htmlFor="minIncrement" className="block mb-2 text-sm font-medium text-gray-900">Incremento Minimo</label>
                                 <input
@@ -192,6 +200,7 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 />
                             </div>
+                            {/* RES PRICE */}
                             <div className="w-full">
                                 <label htmlFor="resPrice" className="block mb-2 text-sm font-medium text-gray-900">Precio de Reserva</label>
                                 <input
@@ -205,24 +214,81 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 />
                             </div>
+                            {/* START DATE */}
+                            <div className="w-full">
+                                <label className="block mb-2 text-sm font-medium text-gray-900">
+                                    Fecha de Inicio
+                                    <div className="relative max-w-sm mt-2.5">
+                                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                            <svg
+                                                className="w-4 h-4 text-gray-500"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                            </svg>
+                                        </div>
+                                        <input ref={datepickerRef} name="initdate"
+                                            id="initdate" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" value={formData.initDate} onChange={handleChange} placeholder="Selecionar Fecha" required />
 
-                            <div className="relative max-w-sm">
-                                <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                    <svg
-                                        className="w-4 h-4 text-gray-500"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                    </svg>
-                                </div>
-                                <input datepicker="true" id="default-datepicker" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Select date" />
-
+                                    </div>
+                                </label>
                             </div>
+                            {/* START HOUR */}
+                            <div className="w-full">
+                                <label className="block mb-2 text-sm font-medium text-gray-900">
+                                    Hora de Incio
+                                    <div className="relative mt-2.5">
+                                        <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input type="time" id="initHour" name="initHour" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" value={formData.initHour} onChange={handleChange} required />
+                                    </div>
 
+                                </label>
+                            </div>
+                            {/* START DATE */}
+                            <div className="w-full">
+                                <label className="block mb-2 text-sm font-medium text-gray-900">
+                                    Fecha de Cierre
+                                    <div className="relative max-w-sm mt-2.5">
+                                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                            <svg
+                                                className="w-4 h-4 text-gray-500"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                            </svg>
+                                        </div>
+                                        <input name="endDate"
+                                            id="endDate" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" value={formData.endDate} onChange={handleChange} placeholder="Selecionar Fecha" required />
 
+                                    </div>
+                                </label>
+                            </div>
+                            {/* START HOUR */}
+                            <div className="w-full">
+                                <label className="block mb-2 text-sm font-medium text-gray-900">
+                                    Hora de Incio
+                                    <div className="relative mt-2.5">
+                                        <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clipRule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input type="time" id="endHour" name="endHour" className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" value={formData.endHour} onChange={handleChange} required />
+                                    </div>
+
+                                </label>
+                            </div>
+                            {/* DECRIPTION */}
                             <div className="sm:col-span-2">
                                 <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
                                 <textarea
@@ -236,6 +302,21 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 ></textarea>
                             </div>
+                            {/* CONDITION */}
+                            <div className="sm:col-span-2">
+                                <label htmlFor="conditions" className="block mb-2 text-sm font-medium text-gray-900">Condiciones</label>
+                                <textarea
+                                    id="conditions"
+                                    name="conditions"
+                                    rows="8"
+                                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
+                                    placeholder="Ingresa una descripción de la subasta"
+                                    required
+                                    value={formData.conditions}
+                                    onChange={handleChange}
+                                ></textarea>
+                            </div>
+                            {/* IMAGE */}
                             <div className="sm:col-span-2">
                                 <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
                                 <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
