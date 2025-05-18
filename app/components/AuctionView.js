@@ -3,8 +3,6 @@ import React, { useState, useEffect } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
 import { addProduct, getCategories, modifyProduct } from "../../lib/features/auction/auctionSlice";
-import Datepicker from 'flowbite-datepicker/Datepicker';
-import 'flowbite/dist/flowbite.css';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import NotificationCard from "../components/NotificationCard";
@@ -31,10 +29,10 @@ export default function AuctionView(props) {
     });
 
 
-    useEffect(() => {
-        const datepickerEl = document.getElementById('datepicker-input');
-        new Datepicker(datepickerEl);
-    }, []);
+    // useEffect(() => {
+    //     const datepickerEl = document.getElementById('datepicker-input');
+    //     new Datepicker(datepickerEl);
+    // }, []);
 
 
     const handleChange = (e) => {
@@ -220,13 +218,8 @@ export default function AuctionView(props) {
                                         <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                     </svg>
                                 </div>
-                                <input
-                                    type="text"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                                    placeholder="Select date"
-                                    id="default-datepicker"
-                                    data-datepicker // Asegúrate de tener un script que inicialice el datepicker con este atributo
-                                />
+                                <input datepicker="true" id="default-datepicker" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Select date" />
+
                             </div>
 
 
