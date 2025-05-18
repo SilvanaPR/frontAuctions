@@ -3,8 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 const initialState = {
   products: [],
   categories: [],
-  currentProduct: {},
-  currentCategory: {}
+  currentProduct: {}
 }
 
 interface Product {
@@ -13,6 +12,7 @@ interface Product {
   price: number,
   description: string,
   image: string,
+  stock: number,
   id?: number
 }
 
@@ -23,10 +23,10 @@ export const productSlice = createSlice({
   reducers: {
     getProducts: (state) => {
       state.products = [
-        { id: 1, description: "Que buen Producto", price: 100, name: "Camisa de Coleccion", category: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 2, description: "Mueble nuevecito de paquete", price: 150, name: "Mueble de Vinos", category: 2, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 3, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 3, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 4, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 4, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
+        { id: 1, description: "Que buen Producto", price: 100, name: "Camisa de Coleccion", category: 1, stock: 10, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
+        { id: 2, description: "Mueble nuevecito de paquete", price: 150, name: "Mueble de Vinos", category: 2, stock: 12, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
+        { id: 3, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 3, stock: 2, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
+        { id: 4, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 4, stock: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
 
       ]
     },
@@ -40,16 +40,12 @@ export const productSlice = createSlice({
         { id: 6, name: "juegos" },
       ]
     },
-    getCurrentCategory: (state, action: PayloadAction<number>) => {
-      const cur: number = state.categories.length + 1
-      state.currentCategory = { id: cur, name: "juegos" }
-    },
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload]
     },
     getCurrentProduct: (state, action: PayloadAction<number>) => {
       const cur: number = state.products.length + 2
-      state.currentProduct = { id: cur, description: `test ${cur}`, price: 100, name: "Camisa de Coleccion", category: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' }
+      state.currentProduct = { id: cur, description: `test ${cur}`, price: 100, name: "Camisa de Coleccion", category: 1, stock: 15, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' }
     },
     deleteProduct: (state, action: PayloadAction<Product>) => {
       state.products = state.products.filter(product => product.id !== action.payload.id);
@@ -64,6 +60,6 @@ export const productSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct, getCurrentCategory } = productSlice.actions
+export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct } = productSlice.actions
 
 export default productSlice.reducer

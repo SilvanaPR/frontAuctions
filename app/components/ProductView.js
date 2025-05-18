@@ -23,6 +23,7 @@ export default function ProductView(props) {
     price: '',
     description: '',
     image: '',
+    stock: ''
   });
 
   useEffect(() => {
@@ -148,8 +149,7 @@ export default function ProductView(props) {
 
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-              {/* ... Campos del formulario ... */}
-              <div className="sm:col-span-2">
+              <div className="w-full">
                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Nombre del Producto</label>
                 <input
                   type="text"
@@ -159,6 +159,19 @@ export default function ProductView(props) {
                   placeholder="Ingrese nombre del producto"
                   required
                   value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="w-full">
+                <label htmlFor="stock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+                <input
+                  type="number"
+                  name="stock"
+                  id="stock"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  placeholder="15"
+                  required
+                  value={formData.stock}
                   onChange={handleChange}
                 />
               </div>

@@ -7,17 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch();
-  //const categories = useSelector((state) => state.product.categories)
-
-  /*
-  useEffect(() => {
-    dispatch(getCategories())
-  }, []);
-  */
 
   const handleDelete = () => {
     dispatch(deleteProduct(product));
   };
+
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -31,7 +25,7 @@ export default function ProductCard({ product }) {
 
       <div className="pt-6">
         <div className="mb-4 flex items-center justify-between gap-4">
-          <span className="me-2 rounded bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800">{ /* categories.find(cat => cat.id === product.category) */}</span>
+          <span className="me-2 rounded bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800">{product.category_name}</span>
         </div>
 
         <a href="#" className="text-lg font-semibold leading-tight text-gray-900 hover:underline">{product.name}</a>
