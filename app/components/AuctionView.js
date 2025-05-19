@@ -59,6 +59,14 @@ export default function AuctionView(props) {
         }
     }, []);
 
+    useEffect(() => {
+        console.log(props.auction)
+        if (props.auction?.id) {
+            setFormData(props.auction);
+            setImageFileBase64(props.auction.image);
+        }
+    }, [props.auction, dispatch]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -105,7 +113,7 @@ export default function AuctionView(props) {
             };
 
             if (props.auction?.id) {
-                // await dispatch(modifyProduct(finalData));
+                await dispatch(modifyAuction(finalData));
             } else {
                 await dispatch(addAuction(finalData));
                 console.log("Subasta agregada:", finalData);
