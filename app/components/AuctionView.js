@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addAuction, modifyProduct } from "../../lib/features/auction/auctionSlice";
+import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import NotificationCard from "../components/NotificationCard";
 import { Datepicker } from 'flowbite';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function AuctionView(props) {
     const [imageFileBase64, setImageFileBase64] = useState('');
@@ -103,7 +103,7 @@ export default function AuctionView(props) {
             const base64Image = await convertToBase64();
             if (!base64Image && !formData.image && !props.auction?.image) {
                 setIsSubmitting(false);
-                setNotification({ title: "Error", text: "Por favor, carga una imagen", type: "danger" });
+                toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
                 return;
             }
 
@@ -114,10 +114,12 @@ export default function AuctionView(props) {
 
             if (props.auction?.id) {
                 await dispatch(modifyAuction(finalData));
+                console.log("Subasta modificada exitosamente:", finalData);
+                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             } else {
                 await dispatch(addAuction(finalData));
-                console.log("Subasta agregada:", finalData);
-                setNotification({ title: "Éxito", text: "Subasta agregada exitosamente", type: "success" });
+                console.log("Subasta agregada exitosamente:", finalData);
+                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             }
 
             setTimeout(() => {
@@ -126,7 +128,7 @@ export default function AuctionView(props) {
 
         } catch (error) {
             console.error("Error al guardar la subasta:", error);
-            setNotification({ title: "Error", text: "Hubo un error al guardar la subasta.", type: "danger" });
+            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
         } finally {
             setIsSubmitting(false);
         }
@@ -159,10 +161,6 @@ export default function AuctionView(props) {
                     </div>
 
                     <h2 className="mb-4 text-xl font-bold text-gray-900">{props.auction?.id ? 'Modificar Subasta' : 'Registrar Subasta Nueva'}</h2>
-
-                    {notification && (
-                        <NotificationCard title={notification.title} text={notification.text} type={notification.type} />
-                    )}
 
                     <form onSubmit={handleSubmit}>
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -336,11 +334,12 @@ export default function AuctionView(props) {
                             className={`inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Guardando...' : `${props.auctions ? 'Modificar' : 'Agregar'} Subasta`}
+                            {isSubmitting ? 'Guardando...' : `${props.auction ? 'Modificar' : 'Agregar'} Subasta`}
                         </button>
                     </form>
                 </div>
             </section>
+            <ToastContainer />
         </div>
     );
 }

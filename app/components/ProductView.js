@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addProduct, getCategories, modifyProduct } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import NotificationCard from "../components/NotificationCard";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function ProductView(props) {
   const [imageFileBase64, setImageFileBase64] = useState('');
@@ -15,7 +15,7 @@ export default function ProductView(props) {
   const categories = useSelector((state) => state.product.categories);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notification, setNotification] = useState(null);
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -65,7 +65,6 @@ export default function ProductView(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    setNotification(null);
 
     if (!selectedCategory) {
       setIsSubmitting(false);
@@ -77,7 +76,7 @@ export default function ProductView(props) {
       base64Image = await convertToBase64();
       if (base64Image === '' && !formData.image && !props.product?.image) {
         setIsSubmitting(false);
-        setNotification({ title: "Error", text: "Por favor, carga una imagen", type: "danger" });
+        toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
         return;
       }
 
@@ -85,22 +84,24 @@ export default function ProductView(props) {
 
       if (props.product?.id) {
         await dispatch(modifyProduct(finalFormData));
+
         console.log("Producto modificado:", finalFormData);
-        setNotification({ title: "Éxito", text: "Producto modificado exitosamente", type: "success" });
+        toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       } else {
         await dispatch(addProduct(finalFormData));
+
         console.log("Producto agregado:", finalFormData);
-        setNotification({ title: "Éxito", text: "Producto agregado exitosamente", type: "success" });
+        toast.success('Producto Creado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       }
 
 
       setTimeout(() => {
-        //router.push('/Product');
+        router.push('/Product');
       }, 1500);
 
     } catch (error) {
       console.error("Error al guardar el producto:", error);
-      setNotification({ title: "Error", text: "Hubo un error al guardar el producto.", type: "danger" });
+      toast.error('Error al Guardar el Producto', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
     } finally {
       setIsSubmitting(false);
     }
@@ -142,10 +143,6 @@ export default function ProductView(props) {
           </div>
 
           <h2 className="mb-4 text-xl font-bold text-gray-900">{props.product?.id ? 'Modificar Producto' : 'Registrar Producto Nuevo'}</h2>
-
-          {notification && (
-            <NotificationCard title={notification.title} text={notification.text} type={notification.type} />
-          )}
 
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -235,6 +232,7 @@ export default function ProductView(props) {
           </form>
         </div>
       </section>
+      <ToastContainer />
     </div>
   );
 }

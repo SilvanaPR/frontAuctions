@@ -4,6 +4,8 @@ import Sidenav from "./components/SideNav";
 import { useEffect, useState } from "react";
 import Header from "./components/MobileHeader";
 import StoreProvider from "./StoreProvider";
+//import 'react-notifications/lib/notifications.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function RootLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,7 +13,6 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-
     handleResize();
     window.addEventListener("resize", handleResize);
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
             </div>
           </div>
         </body>
+
       </html>
     </StoreProvider>
   );

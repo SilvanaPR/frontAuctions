@@ -1,8 +1,8 @@
 'use client'
-import React, { useEffect } from "react";
 import Link from "next/link";
 import { deleteAuction } from "../../lib/features/auction/auctionSlice";
-import { useSelector, useDispatch } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 
 
 export default function AuctionCard({ auction }) {
@@ -11,6 +11,7 @@ export default function AuctionCard({ auction }) {
 
     const handleDelete = () => {
         dispatch(deleteAuction(auction));
+        toast.success('Subasta Eliminada Correctamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
     };
 
 
@@ -88,7 +89,7 @@ export default function AuctionCard({ auction }) {
                                 </p>
 
                                 <div className="mb-2">
-                                    <span className="me-2 rounded bg-primary-100 px-4 py-1 text-base font-semibold text-primary-800">
+                                    <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
                                         {auction.state}
                                     </span>
                                 </div>
@@ -134,6 +135,7 @@ export default function AuctionCard({ auction }) {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </div>
 
     );

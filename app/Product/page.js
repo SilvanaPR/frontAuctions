@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import { useSelector, useDispatch } from 'react-redux';
 import { getProducts, getCategories } from "../../lib/features/product/productSlice";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Product() {
   const products = useSelector((state) => state.product.products)
   const categories = useSelector((state) => state.product.categories)
   const dispatch = useDispatch()
+  const notify = () => toast('Wow so easy !');
 
   const [productsList, setProductList] = useState([])
 
@@ -28,6 +30,7 @@ export default function Product() {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+        <ToastContainer />
       </div>
     </section>
   );

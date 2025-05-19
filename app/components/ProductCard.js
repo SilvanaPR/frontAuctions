@@ -1,8 +1,8 @@
 'use client'
-import React, { useEffect } from "react";
 import Link from "next/link";
-import { deleteProduct, getCategories } from "../../lib/features/product/productSlice";
-import { useSelector, useDispatch } from 'react-redux';
+import { deleteProduct } from "../../lib/features/product/productSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 
 
 export default function ProductCard({ product }) {
@@ -10,7 +10,9 @@ export default function ProductCard({ product }) {
 
   const handleDelete = () => {
     dispatch(deleteProduct(product));
+    toast.success('Producto Eliminado Correctamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
   };
+
 
 
   return (
@@ -25,7 +27,7 @@ export default function ProductCard({ product }) {
 
       <div className="pt-6">
         <div className="mb-4 flex items-center justify-between gap-4">
-          <span className="me-2 rounded bg-primary-100 px-2.5 py-0.5 text-xs font-medium text-primary-800">{product.category_name}</span>
+          <span className="me-2 rounded bg-brand bg-opacity-20 px-2.5 py-0.5 text-xs font-medium text-brand">{product.category_name}</span>
         </div>
 
         <a href="#" className="text-lg font-semibold leading-tight text-gray-900 hover:underline">{product.name}</a>
@@ -34,6 +36,13 @@ export default function ProductCard({ product }) {
         <div className="mt-2 text-sm font-medium text-gray-500 break-words">
           {product.description}
         </div>
+
+        <div className="mt-2 text-sm font-medium text-gray-500 break-words">
+          <p>
+            ( Disponibles: {product.stock} )
+          </p>
+        </div>
+
 
 
 
@@ -46,7 +55,7 @@ export default function ProductCard({ product }) {
           <div className="flex items-center justify-end gap-1">
             <Link href={`/Product/${product.id}`} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
               </svg>
             </Link>
 
@@ -64,6 +73,7 @@ export default function ProductCard({ product }) {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
