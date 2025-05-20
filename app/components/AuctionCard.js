@@ -67,6 +67,12 @@ export default function AuctionCard({ auction }) {
                                         <p className="text-base font-bold text-gray-900">{auction.resPrice}</p>
                                     </div>
                                 </label>
+
+                                <div className="mb-2 mt-4">
+                                    <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
+                                        {auction.state}
+                                    </span>
+                                </div>
                             </div>
 
 
@@ -88,11 +94,7 @@ export default function AuctionCard({ auction }) {
                                     {auction.minIncrement}
                                 </p>
 
-                                <div className="mb-2">
-                                    <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
-                                        {auction.state}
-                                    </span>
-                                </div>
+                                
 
                                 <div className="flex items-center gap-4">
 
