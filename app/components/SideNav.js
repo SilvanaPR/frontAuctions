@@ -54,7 +54,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             <Image
               className={`${!sidebarExpanded ? "lg:hidden" : "block"
                 } mt-1 mb-8 h-8 w-8`}
-              src="/clickbid logo.jpg"
+              src="/clickbid logo.png"
               height={100}
               width={100}
               alt="logo"
