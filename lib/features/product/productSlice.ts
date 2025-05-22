@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
-import axios, { isCancel, AxiosError } from 'axios';
-import api from '.././axios';
+import api from '../../axios';
 
 const initialState = {
   products: [],
@@ -18,10 +17,10 @@ interface Product {
   id?: number
 }
 
-export const fetchProducts = createAsyncThunk(
-  'product/fetchProducts',
+export const fetchCategories = createAsyncThunk(
+  'product/fetchCategories',
   async () => {
-    const response = await api.get('/productos');
+    const response = await api.get('/auctioneer/category');
     return response.data;
   }
 );
