@@ -1,19 +1,7 @@
 'use client'
 import Link from "next/link";
-import { deleteProduct } from "../../lib/features/product/productSlice";
-import { ToastContainer, toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
 
-
-export default function ProductCard({ product }) {
-  const dispatch = useDispatch();
-
-  const handleDelete = () => {
-    dispatch(deleteProduct(product));
-    toast.success('Producto Eliminado Correctamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-  };
-
-
+export default function ProductCard({ product, onDeleteClick }) {
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -63,7 +51,7 @@ export default function ProductCard({ product }) {
               type="button"
               id={`Delete-${product.id}`}
               className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-              onClick={handleDelete}
+              onClick={onDeleteClick}
             >
               <span className="sr-only">Borrar</span>
               <svg className="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -73,7 +61,6 @@ export default function ProductCard({ product }) {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addProduct, getCategories, modifyProduct } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import ConfirmationModal from './ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function ProductView(props) {
@@ -15,7 +16,7 @@ export default function ProductView(props) {
   const categories = useSelector((state) => state.product.categories);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,8 +63,34 @@ export default function ProductView(props) {
     });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleCategoryChange = (e) => {
+    const selectedId = parseInt(e.target.value);
+    const categoryObject = categories.find(cat => cat.id === selectedId);
+    setSelectedCategory(categoryObject);
+    setFormData(prev => ({
+      ...prev,
+      category: categoryObject ? categoryObject.id : '',
+    }));
+  };
+
+  const handleImageChange = (file) => {
+    setImageFileRaw(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageFileBase64(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImageFileBase64('');
+    }
+  };
+
+
+  const executeSubmit = async (event) => {
+    if (event) {
+      event.preventDefault();
+    }
     setIsSubmitting(true);
 
     if (!selectedCategory) {
@@ -107,33 +134,17 @@ export default function ProductView(props) {
     }
   };
 
-  const handleCategoryChange = (e) => {
-    const selectedId = parseInt(e.target.value);
-    const categoryObject = categories.find(cat => cat.id === selectedId);
-    setSelectedCategory(categoryObject);
-    setFormData(prev => ({
-      ...prev,
-      category: categoryObject ? categoryObject.id : '',
-    }));
+  const handleConfirmSubmit = async () => {
+    setShowModal(false);
+    await executeSubmit();
   };
 
-  const handleImageChange = (file) => {
-    setImageFileRaw(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageFileBase64(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImageFileBase64('');
-    }
-  };
 
   return (
     <div className="items-center justify-center h-screen w-full">
       <section>
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 bg-white rounded-lg shadow">
+          {/* RETURN BUTTON */}
           <div className="place-content-end">
             <Link href={`/Product`} className="pt-3 lg:inline-flex mt-auto mb-6">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
@@ -144,8 +155,13 @@ export default function ProductView(props) {
 
           <h2 className="mb-4 text-xl font-bold text-gray-900">{props.product?.id ? 'Modificar Producto' : 'Registrar Producto Nuevo'}</h2>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            setShowModal(true);
+          }}>
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+
+              {/* NAME */}
               <div className="w-full">
                 <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Nombre del Producto</label>
                 <input
@@ -159,6 +175,7 @@ export default function ProductView(props) {
                   onChange={handleChange}
                 />
               </div>
+              {/* STOCK */}
               <div className="w-full">
                 <label htmlFor="stock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
                 <input
@@ -172,6 +189,7 @@ export default function ProductView(props) {
                   onChange={handleChange}
                 />
               </div>
+              {/* CATEGORY */}
               <div>
                 <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900">Categoría</label>
                 <select
@@ -190,6 +208,7 @@ export default function ProductView(props) {
                   ))}
                 </select>
               </div>
+              {/* PRICE */}
               <div className="w-full">
                 <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900">Precio</label>
                 <input
@@ -203,6 +222,7 @@ export default function ProductView(props) {
                   onChange={handleChange}
                 />
               </div>
+              {/* DESCRIPTION */}
               <div className="sm:col-span-2">
                 <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
                 <textarea
@@ -216,12 +236,13 @@ export default function ProductView(props) {
                   onChange={handleChange}
                 ></textarea>
               </div>
+              {/* IMAGE */}
               <div className="sm:col-span-2">
                 <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
                 <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
               </div>
             </div>
-
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
               className={`inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -229,6 +250,14 @@ export default function ProductView(props) {
             >
               {isSubmitting ? 'Guardando...' : `${props.product ? 'Modificar' : 'Agregar'} Producto`}
             </button>
+
+            {showModal && (
+              <ConfirmationModal
+                onCancel={() => setShowModal(false)}
+                onConfirm={handleConfirmSubmit}
+                message={"¿Estás seguro de que deseas continuar?"}
+              />
+            )}
           </form>
         </div>
       </section>

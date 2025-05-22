@@ -6,7 +6,6 @@ import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSli
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
-import { ToastContainer, toast } from 'react-toastify';
 
 export default function AuctionView(props) {
     const [imageFileBase64, setImageFileBase64] = useState('');
@@ -14,7 +13,6 @@ export default function AuctionView(props) {
     const dispatch = useDispatch();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [notification, setNotification] = useState(null);
     const datepickerRef = useRef(null);
 
     const [formData, setFormData] = useState({
@@ -97,7 +95,6 @@ export default function AuctionView(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
-        setNotification(null);
 
         try {
             const base64Image = await convertToBase64();
@@ -339,7 +336,6 @@ export default function AuctionView(props) {
                     </form>
                 </div>
             </section>
-            <ToastContainer />
         </div>
     );
 }
