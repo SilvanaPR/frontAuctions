@@ -2,12 +2,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [showProductSubmenu, setShowProductSubmenu] = useState(false);
   const [showAuctionSubmenu, setShowAuctionSubmenu] = useState(false);
   const sidebar = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (sidebarExpanded) {
@@ -74,7 +76,14 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             {/* PRODUCTS */}
             <li>
               <button
-                onClick={() => setShowProductSubmenu(!showProductSubmenu)}
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowProductSubmenu(!showProductSubmenu);
+                  } else {
+                    router.push("/Product");
+                    setSidebarOpen(false);
+                  }
+                }}
                 className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
               >
                 <div className="text-brand">
@@ -153,7 +162,14 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             {/* AUCTIONS */}
             <li>
               <button
-                onClick={() => setShowAuctionSubmenu(!showAuctionSubmenu)}
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                   setShowAuctionSubmenu(!showAuctionSubmenu);
+                  } else {
+                    router.push("/Auction");
+                    setSidebarOpen(false); 
+                  }
+                }}
                 className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
               >
                 <div className="text-brand">

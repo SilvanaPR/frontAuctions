@@ -32,7 +32,10 @@ export default function ProductView(props) {
 
     if (props.product?.id) {
       setFormData(props.product);
-      setSelectedCategory(props.product.category);
+      console.log("CATEGORY", props.product.category)
+      console.log(categories)
+      const categoryObject = categories.find(cat => cat.id === props.product.category);
+      setSelectedCategory(categoryObject);
       setImageFileBase64(props.product.image);
     }
   }, [props.product, dispatch]);
@@ -46,22 +49,22 @@ export default function ProductView(props) {
   };
 
   const convertToBase64 = () => {
-    return new Promise((resolve, reject) => {
-      if (!imageFileRaw) {
-        resolve('');
-        return;
-      }
-      const reader = new FileReader();
-      reader.readAsDataURL(imageFileRaw);
-      reader.onload = () => {
-        handleChange({ target: { name: "image", value: reader.result } });
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+        return new Promise((resolve, reject) => {
+            if (!imageFileRaw) {
+                resolve('');
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(imageFileRaw);
+            reader.onload = () => {
+                handleChange({ target: { name: "image", value: reader.result } });
+                resolve(reader.result);
+            };
+            reader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
 
   const handleCategoryChange = (e) => {
     const selectedId = parseInt(e.target.value);
@@ -101,13 +104,14 @@ export default function ProductView(props) {
     let base64Image = '';
     try {
       base64Image = await convertToBase64();
-      if (base64Image === '' && !formData.image && !props.product?.image) {
+      
+      if (!base64Image && !formData.image && !props.product?.image) {
         setIsSubmitting(false);
         toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
         return;
       }
 
-      const finalFormData = { ...formData, category: selectedCategory.id };
+      const finalFormData = { ...formData, category: selectedCategory.id, image: base64Image || formData.image || props.product?.image || '' };
 
       if (props.product?.id) {
         await dispatch(modifyProduct(finalFormData));
