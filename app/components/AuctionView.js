@@ -6,6 +6,8 @@ import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSli
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
+import ConfirmationModal from "./ConfirmationModal";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function AuctionView(props) {
     const [imageFileBase64, setImageFileBase64] = useState('');
@@ -14,6 +16,7 @@ export default function AuctionView(props) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const datepickerRef = useRef(null);
+    const [showModal, setShowModal] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -91,7 +94,6 @@ export default function AuctionView(props) {
         });
     };
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -131,6 +133,48 @@ export default function AuctionView(props) {
         }
     };
 
+    
+  const executeSubmit = async (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    setIsSubmitting(true);
+
+    let base64Image = '';
+    try {
+            const base64Image = await convertToBase64();
+            if (!base64Image && !formData.image && !props.auction?.image) {
+                setIsSubmitting(false);
+                toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
+                return;
+            }
+
+            const finalData = {
+                ...formData,
+                image: base64Image || formData.image || props.auction?.image || ''
+            };
+
+            if (props.auction?.id) {
+                await dispatch(modifyAuction(finalData));
+                console.log("Subasta modificada exitosamente:", finalData);
+                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+            } else {
+                await dispatch(addAuction(finalData));
+                console.log("Subasta agregada exitosamente:", finalData);
+                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+            }
+
+            setTimeout(() => {
+                // router.push('/Product');
+            }, 1500);
+
+        } catch (error) {
+            console.error("Error al guardar la subasta:", error);
+            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
+        } finally {
+            setIsSubmitting(false);
+        }
+  };
 
     const handleImageChange = (file) => {
         setImageFileRaw(file);
@@ -143,6 +187,11 @@ export default function AuctionView(props) {
         } else {
             setImageFileBase64('');
         }
+    };
+    
+    const handleConfirmSubmit = async () => {
+        setShowModal(false);
+        await executeSubmit();
     };
 
     return (
@@ -159,7 +208,10 @@ export default function AuctionView(props) {
 
                     <h2 className="mb-4 text-xl font-bold text-gray-900">{props.auction?.id ? 'Modificar Subasta' : 'Registrar Subasta Nueva'}</h2>
 
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        setShowModal(true);
+                    }}>
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
                             {/* NAME */}
                             <div className="w-full">
@@ -333,9 +385,18 @@ export default function AuctionView(props) {
                         >
                             {isSubmitting ? 'Guardando...' : `${props.auction ? 'Modificar' : 'Agregar'} Subasta`}
                         </button>
+
+                        {showModal && (
+                            <ConfirmationModal
+                                onCancel={() => setShowModal(false)}
+                                onConfirm={handleConfirmSubmit}
+                                message={"¿Estás seguro de que deseas continuar?"}
+                            />
+                        )}
                     </form>
                 </div>
             </section>
+            <ToastContainer />
         </div>
     );
 }
