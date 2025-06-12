@@ -19,6 +19,14 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
     }
   }, [sidebarExpanded]);
 
+  const handleSideBarChange = async () => {
+    setSidebarExpanded(!sidebarExpanded);
+    if (!sidebarExpanded) {
+      setShowProductSubmenu(false);
+      setShowAuctionSubmenu(false);
+    }
+  };
+
   return (
     <>
       {/* Sidebar backdrop */}
@@ -43,7 +51,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                 } welcome-step text-2xl font-medium tracking-tighter text-black focus:outline-none focus:ring whitespace-nowrap cursor-pointer`}
             >
               <Image
-                className="mt-2 mb-8 h-100 w-32"
+                className="mt-2 mb- h-100 w-32"
                 src="/clickbidBanner.jpg"
                 height={32}
                 width={300}
@@ -55,7 +63,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
           <Link href="/">
             <Image
               className={`${!sidebarExpanded ? "lg:hidden" : "block"
-                } mt-1 mb-8 h-8 w-8`}
+                } mt-1 mb-4 h-8 w-8`}
               src="/clickbid logo.png"
               height={100}
               width={100}
@@ -66,12 +74,15 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
 
         {/* Links */}
         <div className="space-y-4">
-          <p
-            className={`${sidebarExpanded ? "lg:hidden" : "block"
-              } px-2 text-xs font-base text-gray-400 uppercase`}
-          >
-            Actions
-          </p>
+          {!sidebarExpanded && (
+            <p
+              className={`${sidebarExpanded ? "lg:hidden" : "block"
+                } px-2 text-xs font-base text-gray-400 uppercase`}
+            >
+              Actions
+            </p>
+          )}
+
           <ul className="space-y-2">
             {/* PRODUCTS */}
             <li>
@@ -164,10 +175,10 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
               <button
                 onClick={() => {
                   if (!sidebarExpanded) {
-                   setShowAuctionSubmenu(!showAuctionSubmenu);
+                    setShowAuctionSubmenu(!showAuctionSubmenu);
                   } else {
                     router.push("/Auction");
-                    setSidebarOpen(false); 
+                    setSidebarOpen(false);
                   }
                 }}
                 className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
@@ -249,7 +260,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
         <div className="pt-3 lg:inline-flex mt-auto">
           <div className="flex-1" />
           <div className="px-3 py-2 justify-end">
-            <button onClick={() => setSidebarExpanded(!sidebarExpanded)}>
+            <button onClick={() => handleSideBarChange()}>
               <span className="sr-only">Expand / collapse sidebar</span>
               <svg
                 className={`w-6 h-6 hidden lg:block fill-current ${!sidebarExpanded ? "rotate-0" : "rotate-180"
