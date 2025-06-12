@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
 import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSlice";
+import { getProducts } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
@@ -17,12 +18,16 @@ export default function AuctionView(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const datepickerRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const products = useSelector((state) => state.product.products);
+    const [preview, setPreview] = useState(null);
+
 
     const [formData, setFormData] = useState({
         name: '',
         basePrice: '',
         description: '',
-        image: '',
+        product: '',
         initDate: '',
         endDate: '',
         conditions: '',
@@ -31,6 +36,10 @@ export default function AuctionView(props) {
         initHour: '00:00',
         endHour: '00:00',
     });
+
+    useEffect(() => {
+        dispatch(getProducts());
+    }, [dispatch]);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -76,22 +85,23 @@ export default function AuctionView(props) {
         }));
     };
 
-    const convertToBase64 = () => {
-        return new Promise((resolve, reject) => {
-            if (!imageFileRaw) {
-                resolve('');
-                return;
-            }
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFileRaw);
-            reader.onload = () => {
-                handleChange({ target: { name: "image", value: reader.result } });
-                resolve(reader.result);
-            };
-            reader.onerror = (error) => {
-                reject(error);
-            };
-        });
+    const handleProductChange = (e) => {
+        const selectedId = parseInt(e.target.value);
+        const productObject = products.find(prod => prod.id === selectedId);
+        setSelectedProduct(productObject);
+        setFormData(prev => ({
+            ...prev,
+            product: productObject ? productObject.id : '',
+        }));
+        handleImageChange(productObject);
+    };
+
+    const handleImageChange = (product) => {
+        if (product && product.image) {
+            setPreview(product.image);
+        } else {
+            setPreview(null);
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -99,16 +109,40 @@ export default function AuctionView(props) {
         setIsSubmitting(true);
 
         try {
-            const base64Image = await convertToBase64();
-            if (!base64Image && !formData.image && !props.auction?.image) {
-                setIsSubmitting(false);
-                toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-                return;
+            if (props.auction?.id) {
+                await dispatch(modifyAuction(finalData));
+                console.log("Subasta modificada exitosamente:", finalData);
+                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+            } else {
+                await dispatch(addAuction(finalData));
+                console.log("Subasta agregada exitosamente:", finalData);
+                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             }
 
+            setTimeout(() => {
+                // router.push('/Product');
+            }, 1500);
+
+        } catch (error) {
+            console.error("Error al guardar la subasta:", error);
+            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+
+    const executeSubmit = async (event) => {
+        if (event) {
+            event.preventDefault();
+        }
+        setIsSubmitting(true);
+
+        let base64Image = '';
+        try {
+
             const finalData = {
-                ...formData,
-                image: base64Image || formData.image || props.auction?.image || ''
+                ...formData
             };
 
             if (props.auction?.id) {
@@ -133,62 +167,7 @@ export default function AuctionView(props) {
         }
     };
 
-    
-  const executeSubmit = async (event) => {
-    if (event) {
-      event.preventDefault();
-    }
-    setIsSubmitting(true);
 
-    let base64Image = '';
-    try {
-            const base64Image = await convertToBase64();
-            if (!base64Image && !formData.image && !props.auction?.image) {
-                setIsSubmitting(false);
-                toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-                return;
-            }
-
-            const finalData = {
-                ...formData,
-                image: base64Image || formData.image || props.auction?.image || ''
-            };
-
-            if (props.auction?.id) {
-                await dispatch(modifyAuction(finalData));
-                console.log("Subasta modificada exitosamente:", finalData);
-                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            } else {
-                await dispatch(addAuction(finalData));
-                console.log("Subasta agregada exitosamente:", finalData);
-                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            }
-
-            setTimeout(() => {
-                // router.push('/Product');
-            }, 1500);
-
-        } catch (error) {
-            console.error("Error al guardar la subasta:", error);
-            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-        } finally {
-            setIsSubmitting(false);
-        }
-  };
-
-    const handleImageChange = (file) => {
-        setImageFileRaw(file);
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageFileBase64(reader.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setImageFileBase64('');
-        }
-    };
-    
     const handleConfirmSubmit = async () => {
         setShowModal(false);
         await executeSubmit();
@@ -343,7 +322,7 @@ export default function AuctionView(props) {
 
                                 </label>
                             </div>
-                            {/* DECRIPTION */}
+                            {/* DESCRIPTION */}
                             <div className="sm:col-span-2">
                                 <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
                                 <textarea
@@ -371,11 +350,36 @@ export default function AuctionView(props) {
                                     onChange={handleChange}
                                 ></textarea>
                             </div>
-                            {/* IMAGE */}
-                            <div className="sm:col-span-2">
-                                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
-                                <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
+                            {/* PRODUCT */}
+                            <div>
+                                <label htmlFor="product" className="block mb-2 text-sm font-medium text-gray-900">Producto</label>
+                                <select
+                                    id="product"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                                    name="product"
+                                    value={selectedProduct?.id || ''}
+                                    onChange={handleProductChange}
+                                    required
+                                >
+                                    <option value="">Seleccione un producto</option>
+                                    {products.map((prod) => (
+                                        <option key={prod.id} value={prod.id}>
+                                            {prod.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
+                            {/* IMAGE */}
+                            {preview && (
+                                <div className="mt-4">
+                                    <p className="text-sm text-gray-700 mb-2">Vista previa:</p>
+                                    <img
+                                        src={preview}
+                                        alt="Vista previa"
+                                        className="h-40 object-contain rounded-md border border-gray-300"
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <button
