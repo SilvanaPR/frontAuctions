@@ -1,11 +1,11 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../axios';
 
 const initialState = {
   products: [],
   categories: [],
   currentProduct: {}
-}
+};
 
 interface Product {
   name: string,
@@ -17,6 +17,7 @@ interface Product {
   id?: number
 }
 
+// Thunk para obtener categorías desde la API
 export const fetchCategories = createAsyncThunk(
   'product/fetchCategories',
   async () => {
@@ -25,6 +26,7 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
+// Slice con reducers + extraReducers (CORRECTAMENTE SEPARADO)
 export const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -35,8 +37,7 @@ export const productSlice = createSlice({
         { id: 2, description: "Mueble nuevecito de paquete", price: 150, name: "Mueble de Vinos", category: 2, stock: 12, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
         { id: 3, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 3, stock: 2, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
         { id: 4, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 4, stock: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-
-      ]
+      ];
     },
     getCategories: (state) => {
       state.categories = [
@@ -46,14 +47,22 @@ export const productSlice = createSlice({
         { id: 4, name: "tecnologia" },
         { id: 5, name: "accesorios" },
         { id: 6, name: "juegos" },
-      ]
+      ];
     },
     addProduct: (state, action: PayloadAction<Product>) => {
-      state.products = [...state.products, action.payload]
+      state.products = [...state.products, action.payload];
     },
     getCurrentProduct: (state, action: PayloadAction<number>) => {
-      const cur: number = state.products.length + 2
-      state.currentProduct = { id: cur, description: `test ${cur}`, price: 100, name: "Camisa de Coleccion", category: 1, stock: 15, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' }
+      const cur = state.products.length + 2;
+      state.currentProduct = {
+        id: cur,
+        description: `test ${cur}`,
+        price: 100,
+        name: "Camisa de Coleccion",
+        category: 1,
+        stock: 15,
+        image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg'
+      };
     },
     deleteProduct: (state, action: PayloadAction<Product>) => {
       state.products = state.products.filter(product => product.id !== action.payload.id);
@@ -65,9 +74,24 @@ export const productSlice = createSlice({
       }
     }
   },
-})
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+      })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        console.error('Error fetching categories:', action.error.message);
+      });
+  }
+});
 
-// Action creators are generated for each case reducer function
-export const { getProducts, getCategories, addProduct, deleteProduct, getCurrentProduct, modifyProduct } = productSlice.actions
+export const {
+  getProducts,
+  getCategories,
+  addProduct,
+  deleteProduct,
+  getCurrentProduct,
+  modifyProduct
+} = productSlice.actions;
 
-export default productSlice.reducer
+export default productSlice.reducer;
