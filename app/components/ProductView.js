@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, getCategories, modifyProduct, fetchCategories } from "../../lib/features/product/productSlice";
+import { addProduct, modifyProduct, fetchCategories } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from './ConfirmationModal';
@@ -18,6 +18,10 @@ export default function ProductView(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -29,11 +33,8 @@ export default function ProductView(props) {
 
   useEffect(() => {
     dispatch(fetchCategories());
-    console.log(categories);
     if (props.product?.id) {
       setFormData(props.product);
-      console.log("CATEGORY", props.product.category)
-      console.log(categories)
       const categoryObject = categories.find(cat => cat.id === props.product.category);
       setSelectedCategory(categoryObject);
       setImageFileBase64(props.product.image);
@@ -67,7 +68,7 @@ export default function ProductView(props) {
   };
 
   const handleCategoryChange = (e) => {
-    const selectedId = parseInt(e.target.value);
+    const selectedId = e.target.value;
     const categoryObject = categories.find(cat => cat.id === selectedId);
     setSelectedCategory(categoryObject);
     setFormData(prev => ({

@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../axios';
 
-const initialState = {
-  products: [],
-  categories: [],
-  currentProduct: {}
-};
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 interface Product {
   name: string,
@@ -17,12 +17,31 @@ interface Product {
   id?: number
 }
 
+const initialState: {
+  products: Product[],
+  categories: Category[],
+  currentProduct: Product | {},
+  loadingCategories: boolean
+} = {
+  products: [],
+  categories: [],
+  currentProduct: {},
+  loadingCategories: false
+};
+
+
+
+
 // Thunk para obtener categorías desde la API
 export const fetchCategories = createAsyncThunk(
   'product/fetchCategories',
   async () => {
-    const response = await api.get('/auctioneer/category');
-    return response.data;
+    const { data } = await api.get('/auctioneer/category');
+    // ⬇️  transformamos la forma para que el resto de la app use {id,name}
+    return data.map((c: any) => ({
+      id: c.categoryId,
+      name: c.categoryName,
+    }));
   }
 );
 
@@ -38,7 +57,7 @@ export const productSlice = createSlice({
         { id: 3, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 3, stock: 2, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
         { id: 4, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 4, stock: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
       ];
-    },
+    },/*
     getCategories: (state) => {
       state.categories = [
         { id: 1, name: "ropa" },
@@ -48,7 +67,7 @@ export const productSlice = createSlice({
         { id: 5, name: "accesorios" },
         { id: 6, name: "juegos" },
       ];
-    },
+    },*/
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload];
     },
@@ -76,10 +95,15 @@ export const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchCategories.pending, (state) => {
+        state.loadingCategories = true;
+      })
       .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.loadingCategories = false;
         state.categories = action.payload;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
+        state.loadingCategories = false;
         console.error('Error fetching categories:', action.error.message);
       });
   }
@@ -87,7 +111,7 @@ export const productSlice = createSlice({
 
 export const {
   getProducts,
-  getCategories,
+  //getCategories,
   addProduct,
   deleteProduct,
   getCurrentProduct,

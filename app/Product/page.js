@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import { useSelector, useDispatch } from 'react-redux';
-import { getProducts, getCategories, deleteProduct } from "../../lib/features/product/productSlice";
+import { getProducts, fetchCategories, deleteProduct } from "../../lib/features/product/productSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -23,7 +23,7 @@ export default function Product() {
 
   useEffect(() => {
     dispatch(getProducts());
-    dispatch(getCategories());
+    dispatch(fetchCategories());
   }, [dispatch]);
 
   useEffect(() => {
