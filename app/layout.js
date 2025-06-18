@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
 
 
-  const hideLayout = ["/Login"];
+  const hideLayout = ["/Login", "/Login/Register"];
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

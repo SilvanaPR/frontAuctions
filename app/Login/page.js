@@ -2,12 +2,15 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import RegisterModal from '../components/RegisterModal';
+
 import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,7 +18,7 @@ export default function Login() {
 
     if (email === "admin@correo.com" && password === "123456") {
       toast.success("Inicio de sesión exitoso!");
-      router.push("/Product/page"); 
+      router.push("/Product/page");
     } else {
       toast.error("Correo o contraseña incorrectos");
     }
@@ -61,16 +64,25 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <a href="#" className="text-sm font-medium text-brand hover:underline">Olvidaste tu contraseña?</a>
               </div>
-              
+
 
               <Link href={`/Product`} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
                 <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                    Iniciar sesión
+                  Iniciar sesión
                 </button>
               </Link>
-              <p className="text-sm font-light text-gray-500">
-                No tienes una cuenta? <a href="#" className="font-medium text-brand hover:underline">Registrate</a>
+              <p className="text-sm font-light text-gray-500 mt-4">
+                No tienes una cuenta?{' '}
+                <button
+                  onClick={() => setShowRegister(true)}
+                  className="font-medium text-brand hover:underline"
+                >
+                  Regístrate
+                </button>
               </p>
+
+              {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
+
             </form>
           </div>
         </div>
