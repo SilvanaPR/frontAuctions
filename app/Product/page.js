@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import { useSelector, useDispatch } from 'react-redux';
-import { getProducts, fetchCategories, deleteProduct } from "../../lib/features/product/productSlice";
+import { fetchProducts, fetchCategories, deleteProduct } from "../../lib/features/product/productSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -22,7 +22,7 @@ export default function Product() {
   const totalPages = Math.ceil(productsList.length / productsPerPage);
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(fetchProducts());
     dispatch(fetchCategories());
   }, [dispatch]);
 

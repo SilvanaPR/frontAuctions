@@ -14,30 +14,32 @@ interface Product {
   description: string,
   image: string,
   stock: number,
-  id?: number
+  id?: string | number,
+  availability: string,
+  user: string
 }
 
 const initialState: {
   products: Product[],
   categories: Category[],
   currentProduct: Product | {},
-  loadingCategories: boolean
+  loadingCategories: boolean,
+  loadingProducts: boolean,
+  loadingProduct: boolean,
 } = {
   products: [],
   categories: [],
   currentProduct: {},
-  loadingCategories: false
+  loadingCategories: false,
+  loadingProducts: false,
+  loadingProduct: false,
 };
 
 
-
-
-// Thunk para obtener categorías desde la API
 export const fetchCategories = createAsyncThunk(
   'product/fetchCategories',
   async () => {
     const { data } = await api.get('/auctioneer/category');
-    // ⬇️  transformamos la forma para que el resto de la app use {id,name}
     return data.map((c: any) => ({
       id: c.categoryId,
       name: c.categoryName,
@@ -45,43 +47,51 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
-// Slice con reducers + extraReducers (CORRECTAMENTE SEPARADO)
+export const fetchProducts = createAsyncThunk(
+  'product/fetchProducts',
+  async () => {
+    const { data } = await api.get('/auctioneer/product?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
+    return data.map((p: any) => ({
+      id: p.productId,
+      name: p.productName,
+      category: p.categoryId,
+      price: p.productPrice,
+      description: p.productDescription,
+      image: p.productImage,
+      stock: p.productStock,
+      availability: p.productAvilability,
+      user: p.productUserId
+    }));
+  }
+);
+
+export const fetchProduct = createAsyncThunk(
+  'product/fetchSingleProduct',
+  async (productId: string) => {
+    const { data } = await api.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
+    return {
+      id: data.productId,
+      name: data.productName,
+      category: data.categoryId,
+      price: data.productPrice,
+      description: data.productDescription,
+      image: data.productImage,
+      stock: data.productStock,
+      availability: data.productAvilability,
+      user: data.productUserId,
+    };
+  }
+);
+
+
+
+
 export const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    getProducts: (state) => {
-      state.products = [
-        { id: 1, description: "Que buen Producto", price: 100, name: "Camisa de Coleccion", category: 1, stock: 10, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 2, description: "Mueble nuevecito de paquete", price: 150, name: "Mueble de Vinos", category: 2, stock: 12, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 3, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 3, stock: 2, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-        { id: 4, description: "Coleccion de juegos vintage", price: 200, name: "Coleccion de Juegos", category: 4, stock: 1, image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg' },
-      ];
-    },/*
-    getCategories: (state) => {
-      state.categories = [
-        { id: 1, name: "ropa" },
-        { id: 2, name: "muebles" },
-        { id: 3, name: "maquillaje" },
-        { id: 4, name: "tecnologia" },
-        { id: 5, name: "accesorios" },
-        { id: 6, name: "juegos" },
-      ];
-    },*/
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload];
-    },
-    getCurrentProduct: (state, action: PayloadAction<number>) => {
-      const cur = state.products.length + 2;
-      state.currentProduct = {
-        id: cur,
-        description: `test ${cur}`,
-        price: 100,
-        name: "Camisa de Coleccion",
-        category: 1,
-        stock: 15,
-        image: 'https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg'
-      };
     },
     deleteProduct: (state, action: PayloadAction<Product>) => {
       state.products = state.products.filter(product => product.id !== action.payload.id);
@@ -95,6 +105,7 @@ export const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // CATEGORIAS
       .addCase(fetchCategories.pending, (state) => {
         state.loadingCategories = true;
       })
@@ -105,17 +116,39 @@ export const productSlice = createSlice({
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loadingCategories = false;
         console.error('Error fetching categories:', action.error.message);
+      })
+
+      // PRODUCTO
+      .addCase(fetchProducts.pending, (state) => {
+        state.loadingProducts = true;
+      })
+      .addCase(fetchProducts.fulfilled, (state, action) => {
+        state.loadingProducts = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.loadingProducts = false;
+        console.error('Error fetching products:', action.error.message);
+      })
+
+      .addCase(fetchProduct.pending, (state) => {
+        state.loadingProduct = true;
+      })
+      .addCase(fetchProduct.fulfilled, (state, action) => {
+        state.loadingProduct = false;
+        state.currentProduct = action.payload;
+      })
+      .addCase(fetchProduct.rejected, (state, action) => {
+        state.loadingProduct = false;
+        console.error('Error fetching single product:', action.error.message);
       });
   }
 });
 
 export const {
-  getProducts,
-  //getCategories,
   addProduct,
   deleteProduct,
-  getCurrentProduct,
-  modifyProduct
+  modifyProduct,
 } = productSlice.actions;
 
 export default productSlice.reducer;

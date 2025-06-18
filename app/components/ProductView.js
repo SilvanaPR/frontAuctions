@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, modifyProduct, fetchCategories } from "../../lib/features/product/productSlice";
+import { addProduct, modifyProduct, fetchCategories, fetchProduct } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from './ConfirmationModal';
@@ -35,6 +35,7 @@ export default function ProductView(props) {
     dispatch(fetchCategories());
     if (props.product?.id) {
       setFormData(props.product);
+      console.log(props.product)
       const categoryObject = categories.find(cat => cat.id === props.product.category);
       setSelectedCategory(categoryObject);
       setImageFileBase64(props.product.image);

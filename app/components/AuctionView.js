@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
 import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSlice";
-import { getProducts } from "../../lib/features/product/productSlice";
+import { fetchProducts } from "../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
@@ -38,7 +38,7 @@ export default function AuctionView(props) {
     });
 
     useEffect(() => {
-        dispatch(getProducts());
+        dispatch(fetchProducts());
     }, [dispatch]);
 
     useEffect(() => {
@@ -86,7 +86,7 @@ export default function AuctionView(props) {
     };
 
     const handleProductChange = (e) => {
-        const selectedId = parseInt(e.target.value);
+        const selectedId = e.target.value;
         const productObject = products.find(prod => prod.id === selectedId);
         setSelectedProduct(productObject);
         setFormData(prev => ({

@@ -1,20 +1,22 @@
 "use client";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { getCurrentProduct } from "../../../lib/features/product/productSlice";
-
+import { fetchProduct } from "../../../lib/features/product/productSlice";
 import ProductView from "../../components/ProductView";
+import { useParams } from "next/navigation";
 
-export default function Manage({ params }) {
+export default function Manage() {
   const dispatch = useDispatch();
-  const { id } = React.use(params);
+  const params = useParams();
+  const id = params?.id;
 
-
-  const currentProduct = useSelector((state) => state.product.currentProduct)
+  const currentProduct = useSelector((state) => state.product.currentProduct);
 
   useEffect(() => {
-    dispatch(getCurrentProduct(id))
-  }, []);
+    if (id) {
+      dispatch(fetchProduct(id));
+    }
+  }, [dispatch, id]);
 
-  return <ProductView product={currentProduct} />
+  return <ProductView product={currentProduct} />;
 }
