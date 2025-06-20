@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/Product/ProductCard";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProducts, fetchCategories, deleteProduct } from "../../lib/features/product/productSlice";
 import { ToastContainer, toast } from 'react-toastify';

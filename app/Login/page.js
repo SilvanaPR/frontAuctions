@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import RegisterModal from '../components/RegisterModal';
-
+import RegisterModal from '../components/User/RegisterModal';
+import ChangePasswordModal from '../components/User/ChangePasswordModal';
 import Link from "next/link";
 
 export default function Login() {
@@ -11,14 +11,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
 
-    if (email === "admin@correo.com" && password === "123456") {
+    if (email === "admin@correo.com" && password === "123") {
       toast.success("Inicio de sesión exitoso!");
-      router.push("/Product/page");
+      router.push("/Producto");
     } else {
       toast.error("Correo o contraseña incorrectos");
     }
@@ -62,18 +64,23 @@ export default function Login() {
                 />
               </div>
               <div className="flex items-center justify-between">
-                <a href="#" className="text-sm font-medium text-brand hover:underline">Olvidaste tu contraseña?</a>
+                <button
+                  type="button"
+                  onClick={() => setShowChangePassword(true)}
+                  className="text-sm font-medium text-brand hover:underline"
+                >
+                  Olvidaste tu contraseña?
+                </button>
               </div>
 
 
-              <Link href={`/Product`} className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900">
-                <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                  Iniciar sesión
-                </button>
-              </Link>
+              <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Iniciar sesión
+              </button>
               <p className="text-sm font-light text-gray-500 mt-4">
                 No tienes una cuenta?{' '}
                 <button
+                  type="button"
                   onClick={() => setShowRegister(true)}
                   className="font-medium text-brand hover:underline"
                 >
@@ -81,9 +88,12 @@ export default function Login() {
                 </button>
               </p>
 
-              {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
-
             </form>
+            
+            {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
+            {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
+            
+
           </div>
         </div>
       </div>

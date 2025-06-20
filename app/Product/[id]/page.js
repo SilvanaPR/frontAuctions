@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchProduct } from "../../../lib/features/product/productSlice";
-import ProductView from "../../components/ProductView";
+import ProductView from "../../components/Product/ProductView";
 import { useParams } from "next/navigation";
 
 export default function Manage() {

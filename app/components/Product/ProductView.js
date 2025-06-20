@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import ImageReader from "./ImageReader";
+import ImageReader from "../ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, modifyProduct, fetchCategories, fetchProduct } from "../../lib/features/product/productSlice";
+import { addProduct, modifyProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal from '../ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function ProductView(props) {

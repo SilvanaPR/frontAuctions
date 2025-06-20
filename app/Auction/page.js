@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import AuctionCard from "../components/AuctionCard";
+import AuctionCard from "../components/Auction/AuctionCard";
 import { useSelector, useDispatch } from 'react-redux';
 import { getAuctions, deleteAuction } from "../../lib/features/auction/auctionSlice";
 import { ToastContainer, toast } from 'react-toastify';
