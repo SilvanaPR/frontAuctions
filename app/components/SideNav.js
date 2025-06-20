@@ -8,6 +8,8 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [showProductSubmenu, setShowProductSubmenu] = useState(false);
   const [showAuctionSubmenu, setShowAuctionSubmenu] = useState(false);
+  const [showRoleSubmenu, setShowRoleSubmenu] = useState(false);
+  const [showPaymentSubmenu, setShowPaymentSubmenu] = useState(false);
   const sidebar = useRef(null);
   const router = useRouter();
 
@@ -246,6 +248,179 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             }ml-3 whitespace-nowrap `}
                         >
                           Crear Subasta
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            {/* ROLES */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowRoleSubmenu(!showRoleSubmenu);
+                  } else {
+                    router.push("/User");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  </svg>
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Roles
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={showRoleSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                      />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showRoleSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Gestion de Roles
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User/Create"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Crear Rol
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            {/* PAYMENTS */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowPaymentSubmenu(!showPaymentSubmenu);
+                  } else {
+                    router.push("/User");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand">
+                  <svg className="w-6 h-6 text-gray-brand dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z"/>
+                  </svg>
+
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Pagos
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={showPaymentSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                      />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showPaymentSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Gestion de Pagos
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User/Create"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Crear Rol
                         </span>
                       </span>
                     </Link>
