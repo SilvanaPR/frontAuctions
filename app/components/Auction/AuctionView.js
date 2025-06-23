@@ -1,13 +1,12 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import ImageReader from "./ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addAuction, modifyAuction } from "../../lib/features/auction/auctionSlice";
-import { fetchProducts } from "../../lib/features/product/productSlice";
+import { addAuction, modifyAuction } from "../../../lib/features/auction/auctionSlice";
+import { fetchProducts } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
-import ConfirmationModal from "./ConfirmationModal";
+import ConfirmationModal from "../ConfirmationModal";
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function AuctionView(props) {

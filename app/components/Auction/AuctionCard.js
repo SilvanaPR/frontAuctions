@@ -58,9 +58,10 @@ export default function AuctionCard({ auction, onDeleteClick }) {
 
                                 <div className="mb-2 mt-4">
                                     <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
-                                        {auction.state}
+                                        Cantidad: {auction.prodQuantity}
                                     </span>
                                 </div>
+
                             </div>
 
 

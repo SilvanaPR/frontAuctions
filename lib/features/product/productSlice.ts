@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../axios';
-
+import { apiProduct } from '@/lib/axios';
 
 interface Category {
   id: string;
@@ -39,7 +38,7 @@ const initialState: {
 export const fetchCategories = createAsyncThunk(
   'product/fetchCategories',
   async () => {
-    const { data } = await api.get('/auctioneer/category');
+    const { data } = await apiProduct.get('/auctioneer/category');
     return data.map((c: any) => ({
       id: c.categoryId,
       name: c.categoryName,
@@ -50,7 +49,7 @@ export const fetchCategories = createAsyncThunk(
 export const fetchProducts = createAsyncThunk(
   'product/fetchProducts',
   async () => {
-    const { data } = await api.get('/auctioneer/product?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
+    const { data } = await apiProduct.get('/auctioneer/product?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
     return data.map((p: any) => ({
       id: p.productId,
       name: p.productName,
@@ -68,7 +67,7 @@ export const fetchProducts = createAsyncThunk(
 export const fetchProduct = createAsyncThunk(
   'product/fetchSingleProduct',
   async (productId: string) => {
-    const { data } = await api.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
+    const { data } = await apiProduct.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
     return {
       id: data.productId,
       name: data.productName,

@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from "react";
 import AuctionCard from "../components/Auction/AuctionCard";
 import { useSelector, useDispatch } from 'react-redux';
-import { getAuctions, deleteAuction } from "../../lib/features/auction/auctionSlice";
+import { fetchAuctions, deleteAuction } from "../../lib/features/auction/auctionSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function Auction() {
-    const auctions = useSelector((state) => state.auction.auctions)
+    const auctions = useSelector((state) => state.auction.auctions);
     const dispatch = useDispatch()
     const [currentPage, setCurrentPage] = useState(1)
     const auctionsPerPage = 8
@@ -20,7 +20,8 @@ export default function Auction() {
     const [auctionToDelete, setAuctionToDelete] = useState(null);
 
     useEffect(() => {
-        dispatch(getAuctions())
+        dispatch(fetchAuctions())
+        console.log(auctions)
     }, [dispatch])
 
     const confirmDelete = (auction) => {

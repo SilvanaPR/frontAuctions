@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrentAuction } from "../../../lib/features/auction/auctionSlice";
 
-import AuctionView from "../../components/AuctionView";
+import AuctionView from "../../components/Auction/AuctionView";
 
 export default function Manage({ params }) {
     const dispatch = useDispatch();
