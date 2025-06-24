@@ -54,6 +54,7 @@ export const fetchUser = createAsyncThunk(
     'user/fetchUser',
     async (userId: string) => {
         const { data } = await apiUser.get(`/user/users/${userId}`);
+        console.log(data)
         return {
             userId: data.userId,
             userEmail: data.userEmail,
@@ -88,7 +89,7 @@ export const userSlice = createSlice({
             })
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.loadingUsers = false;
-                console.error('Error fetching acutions:', action.error.message);
+                console.error('Error fetching users:', action.error.message);
             })
 
             .addCase(fetchUser.pending, (state) => {
@@ -100,7 +101,7 @@ export const userSlice = createSlice({
             })
             .addCase(fetchUser.rejected, (state, action) => {
                 state.loadingUser = false;
-                console.error('Error fetching acutions:', action.error.message);
+                console.error('Error fetching users:', action.error.message);
             });
     },
 })

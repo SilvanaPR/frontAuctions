@@ -1,36 +1,45 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUser } from "../../lib/features/user/userSlice";
+import { fetchUser } from "../../../lib/features/user/userSlice";
 import { ToastContainer, toast } from 'react-toastify';
-import ConfirmationModal from '../components/ConfirmationModal';
-import ImageReader from "../components/ImageReader";
+import ConfirmationModal from '../ConfirmationModal';
+import ImageReader from "../ImageReader";
 
-
-export default function UserConfiguration(props) {
-    const user = useSelector((state) => state.product.products);
+export default function Configuration(user) {
+    
     const dispatch = useDispatch();
     const [imageFileBase64, setImageFileBase64] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [imageFileRaw, setImageFileRaw] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         tipo: '',
-        password: '',
         phone: '',
         address: '',
         lastName: '',
+        image: ''
     });
 
+
     useEffect(() => {
-        console.log(p0rops)
-        if (id) {
-            dispatch(fetchUser(props.userId));
+        console.log(user.user.userName)
+        if (user) {
+            setFormData({
+                name: user.user.userName || '',
+                email: user.user.userEmail || '',
+                tipo: user.user.usersType || '',
+                phone: user.user.userPhone || '',
+                address: user.user.userAddress || '',
+                lastName: user.user.userLastName || '',
+                image: user.user.image || ''
+            });
         }
-    }, [dispatch]);
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,77 +55,38 @@ export default function UserConfiguration(props) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageFileBase64(reader.result);
+                setFormData(prev => ({
+                    ...prev,
+                    image: reader.result,
+                }));
             };
             reader.readAsDataURL(file);
         } else {
             setImageFileBase64('');
+            setFormData(prev => ({
+                ...prev,
+                image: '',
+            }));
         }
     };
-
-    const convertToBase64 = () => {
-        return new Promise((resolve, reject) => {
-            if (!imageFileRaw) {
-                resolve('');
-                return;
-            }
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFileRaw);
-            reader.onload = () => {
-                handleChange({ target: { name: "image", value: reader.result } });
-                resolve(reader.result);
-            };
-            reader.onerror = (error) => {
-                reject(error);
-            };
-        });
-    };
-
-    const confirmDelete = (product) => {
-        setProductToDelete(product);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        if (productToDelete) {
-            dispatch(deleteProduct(productToDelete));
-            toast.success('Producto eliminado correctamente', {
-                position: "bottom-right",
-                className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',
-                autoClose: 3000,
-                closeOnClick: true,
-                draggable: true,
-            });
-        }
-        setShowModal(false);
-        setProductToDelete(null);
-    };
-
-    const handleCancelDelete = () => {
-        setShowModal(false);
-        setProductToDelete(null);
-    };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!isEditing) {
-            setIsEditing(true);
-            return;
-        }
+        if (!isEditing) return setIsEditing(true);
 
         try {
             setIsSubmitting(true);
 
-            // Aquí deberías colocar tu lógica de actualización real (por ejemplo, dispatch(updateUser(formData)))
-            await new Promise((res) => setTimeout(res, 1200)); // simulación
+            const payload = { ...formData };
+
+            console.log("Payload a enviar ⇢", payload);
+
 
             toast.success("Cambios guardados correctamente", {
                 position: "bottom-right",
                 className:
                     "text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700",
             });
-
             setIsEditing(false);
         } catch (err) {
             toast.error("Error al guardar los cambios");
@@ -133,8 +103,48 @@ export default function UserConfiguration(props) {
             <form onSubmit={handleSubmit}>
                 <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 bg-white rounded-lg shadow grid gap-4 sm:grid-cols-2 sm:gap-6">
 
-                    <div className="sm:col-span-2 group mb-4">
-                        <img className="rounded-sm w-36 h-36 mb-8" src={user.image} ></img>
+                    <div className="sm:col-span-2 flex justify-center">
+                        <div className="relative group">
+                            <img
+                                src={formData.image || user.user.image || "/user.png"}
+                                alt="avatar"
+                                className="w-32 h-32 rounded-full object-cover border shadow border-brand border-4"
+                            />
+
+                            {isEditing && (
+                                <>
+                                    <label
+                                        htmlFor="avatar"
+                                        className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition"
+                                        title="Cambiar foto"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="w-6 h-6"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M3 7h2l2-3h10l2 3h2a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V8a1 1 0 011-1z"
+                                            />
+                                            <circle cx="12" cy="13" r="4" />
+                                        </svg>
+                                    </label>
+
+                                    <input
+                                        id="avatar"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleImageChange(e.target.files[0])}
+                                        className="hidden"
+                                    />
+                                </>
+                            )}
+                        </div>                      
                     </div>
 
                     {/* NAME */}
@@ -181,22 +191,6 @@ export default function UserConfiguration(props) {
                         />
                     </div>
 
-                    {/* PASSWORD */}
-                    <div className="relative z-0 w-full mb-5 group mb-4">
-                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Contraseña</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                            placeholder=" "
-                            required
-                            value={formData.password}
-                            onChange={handleChange}
-                            disabled={!isEditing}
-                        />
-                    </div>
-
                     {/* PHONE */}
                     <div className="w-full mb-4">
                         <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900">Teléfono</label>
@@ -206,7 +200,7 @@ export default function UserConfiguration(props) {
                             id="phone"
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                             required
-                            value={formData.email}
+                            value={formData.phone}
                             onChange={handleChange}
                             disabled={!isEditing}
                         />
@@ -214,14 +208,14 @@ export default function UserConfiguration(props) {
 
                     {/* ADRESS */}
                     <div className="sm:col-span-2 group mb-4">
-                        <label htmlFor="adress" className="block mb-2 text-sm font-medium text-gray-900">Dirección</label>
+                        <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-900">Dirección</label>
                         <textarea
-                            id="adress"
-                            name="adress"
+                            id="address"
+                            name="address"
                             rows="8"
                             className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
                             required
-                            value={formData.adress}
+                            value={formData.address}
                             onChange={handleChange}
                             disabled={!isEditing}
                         ></textarea>
@@ -234,7 +228,7 @@ export default function UserConfiguration(props) {
                             className={`inline-flex items-center px-6 py-3 mt-4 sm:mt-6 text-base font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200 transition duration-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Guardando...' : 'Modificar Usuario'}
+                            {isEditing ? 'Guardar Cambios' : 'Modificar Usuario'}
                         </button>
                     </div>
                 </div >

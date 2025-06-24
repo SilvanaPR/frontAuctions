@@ -15,7 +15,7 @@ export default function ProductView(props) {
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.product.categories);
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);z
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
