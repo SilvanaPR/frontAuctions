@@ -9,3 +9,21 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+
+  db:
+    image: postgres:13
+    build:
+      context: .
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yeniree0813
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+      - ./init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
+
+
+volumes:
+  postgres-db-volume:

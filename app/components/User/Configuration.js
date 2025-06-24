@@ -27,7 +27,6 @@ export default function Configuration(user) {
 
 
     useEffect(() => {
-        console.log(user.user.userName)
         if (user) {
             setFormData({
                 name: user.user.userName || '',
@@ -177,7 +176,7 @@ export default function Configuration(user) {
                     </div>
 
                     {/* EMAIL */}
-                    <div className="sm:col-span-2 mb-4">
+                    <div className="w-full mb-4">
                         <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">Email</label>
                         <input
                             type="email"

@@ -54,7 +54,6 @@ export const fetchUser = createAsyncThunk(
     'user/fetchUser',
     async (userId: string) => {
         const { data } = await apiUser.get(`/user/users/${userId}`);
-        console.log(data)
         return {
             userId: data.userId,
             userEmail: data.userEmail,
