@@ -15,6 +15,7 @@ export default function Manage() {
   useEffect(() => {
     if (id) {
       dispatch(fetchProduct(id));
+      console.log(currentProduct);
     }
   }, [dispatch, id]);
 

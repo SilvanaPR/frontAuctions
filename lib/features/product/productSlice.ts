@@ -26,6 +26,7 @@ const initialState: {
   loadingProducts: boolean,
   loadingProduct: boolean,
   loadingCreateProduct: boolean,
+  loadingUpdateProduct: boolean,
 } = {
   products: [],
   categories: [],
@@ -34,6 +35,7 @@ const initialState: {
   loadingProducts: false,
   loadingProduct: false,
   loadingCreateProduct: false,
+  loadingUpdateProduct: false,
 };
 
 
@@ -95,6 +97,13 @@ export const createProduct = createAsyncThunk(
   }
 );
 
+export const updateProduct = createAsyncThunk(
+  'product/updateProduct',
+  async (product: Product) => {
+    const { data } = await apiProduct.put(`/auctioneer/product/Update-Product/${product.productId}`, product);
+    return data;
+  }
+);
 
 export const productSlice = createSlice({
   name: 'product',
@@ -102,12 +111,6 @@ export const productSlice = createSlice({
   reducers: {
     deleteProduct: (state, action: PayloadAction<Product>) => {
       //state.products = state.products.filter(product => product.id !== action.payload.id);
-    },
-    modifyProduct: (state, action: PayloadAction<Product>) => {
-      //const index = state.products.findIndex(product => product.id === action.payload.id);
-      //if (index !== -1) {
-      //  state.products[index] = action.payload;
-      //}
     }
   },
   extraReducers: (builder) => {
@@ -160,13 +163,24 @@ export const productSlice = createSlice({
       .addCase(createProduct.rejected, (state, action) => {
         state.loadingCreateProduct = false;
         console.error('Error creating product:', action.error.message);
+      })
+
+      .addCase(updateProduct.pending, (state) => {
+        state.loadingUpdateProduct = true;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loadingUpdateProduct = false;
+        state.currentProduct = action.payload;
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.loadingUpdateProduct = false;
+        console.error('Error updating product:', action.error.message);
       });
   }
 });
 
 export const {
   deleteProduct,
-  modifyProduct,
 } = productSlice.actions;
 
 export default productSlice.reducer;

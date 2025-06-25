@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "../ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { createProduct, modifyProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
+import { createProduct, updateProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from '../ConfirmationModal';
@@ -130,7 +130,7 @@ export default function ProductView(props) {
       };
 
       if (props.product?.productId) {
-        await dispatch(modifyProduct(finalFormData));
+        await dispatch(updateProduct(finalFormData));
         toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       } else {
         await dispatch(createProduct(finalFormData));
