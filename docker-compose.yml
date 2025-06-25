@@ -11,7 +11,7 @@ services:
       - /app/node_modules
 
   db:
-    image: postgres:13
+    image: postgres:17
     build:
       context: .
     environment:
@@ -24,6 +24,15 @@ services:
       - postgres-db-volume:/var/lib/postgresql/data
       - ./init-multiple-dbs.sql:/docker-entrypoint-initdb.d/init-multiple-dbs.sql
 
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+
 
 volumes:
-  postgres-db-volume:
+  postgres-db-volume: 
+  rabbitmq-volume:

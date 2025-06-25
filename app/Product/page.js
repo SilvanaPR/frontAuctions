@@ -29,7 +29,7 @@ export default function Product() {
   useEffect(() => {
     setProductList(products.map((el) => ({
       ...el,
-      category_name: categories.find(i => i.id == el.category)?.name
+      category_name: categories.find(i => i.id == el.categoryId)?.name
     })));
   }, [products, categories]);
 
@@ -67,12 +67,12 @@ export default function Product() {
     <section className="bg-gray-50 py-8 antialiased md:py-12">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="mb-8">
-          <SearchBar />
+          <SearchBar categories={["Todos", "Nombre", "Categoría", "Precio"]} />
         </div>
 
         <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-          {currentProducts.map((product) => (
-            <ProductCard key={product.id} product={product} onDeleteClick={() => confirmDelete(product)} />
+          {productsList.map((product) => (
+            <ProductCard key={product.productId} product={product} onDeleteClick={() => confirmDelete(product)} />
           ))}
         </div>
 

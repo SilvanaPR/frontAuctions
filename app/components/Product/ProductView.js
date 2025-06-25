@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import ImageReader from "../ImageReader";
 import { useSelector, useDispatch } from 'react-redux';
-import { addProduct, modifyProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
+import { createProduct, modifyProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from '../ConfirmationModal';
@@ -23,22 +23,24 @@ export default function ProductView(props) {
   }, [dispatch]);
 
   const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    price: '',
-    description: '',
-    image: '',
-    stock: ''
+    productId: '',
+    productName: '',
+    productImage: '',
+    productPrice: '',
+    productDescription: '',
+    productAvilability: 'Disponible',
+    productStock: '',
+    categoryId: '',
+    productUserId: '7671574c-6fb8-43b7-98be-897a98c487a0'
   });
 
   useEffect(() => {
     dispatch(fetchCategories());
-    if (props.product?.id) {
+    if (props.product?.productId) {
       setFormData(props.product);
-      console.log(props.product)
-      const categoryObject = categories.find(cat => cat.id === props.product.category);
+      const categoryObject = categories.find(cat => cat.id === props.product.categoryId);
       setSelectedCategory(categoryObject);
-      setImageFileBase64(props.product.image);
+      setImageFileBase64(props.product.productImage);
     }
   }, [props.product, dispatch]);
 
@@ -59,7 +61,7 @@ export default function ProductView(props) {
       const reader = new FileReader();
       reader.readAsDataURL(imageFileRaw);
       reader.onload = () => {
-        handleChange({ target: { name: "image", value: reader.result } });
+        handleChange({ target: { name: "productImage", value: reader.result } });
         resolve(reader.result);
       };
       reader.onerror = (error) => {
@@ -74,7 +76,7 @@ export default function ProductView(props) {
     setSelectedCategory(categoryObject);
     setFormData(prev => ({
       ...prev,
-      category: categoryObject ? categoryObject.id : '',
+      categoryId: categoryObject ? categoryObject.id : '',
     }));
   };
 
@@ -84,10 +86,18 @@ export default function ProductView(props) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImageFileBase64(reader.result);
+        setFormData(prev => ({
+          ...prev,
+          productImage: reader.result
+        }));
       };
       reader.readAsDataURL(file);
     } else {
       setImageFileBase64('');
+      setFormData(prev => ({
+        ...prev,
+        productImage: ''
+      }));
     }
   };
 
@@ -107,30 +117,31 @@ export default function ProductView(props) {
     try {
       base64Image = await convertToBase64();
 
-      if (!base64Image && !formData.image && !props.product?.image) {
+      if (!base64Image && !formData.productImage && !props.product?.productImage) {
         setIsSubmitting(false);
         toast.error('Por Favor Selecciona una Imagen', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
         return;
       }
 
-      const finalFormData = { ...formData, category: selectedCategory.id, image: base64Image || formData.image || props.product?.image || '' };
+      const finalFormData = {
+        ...formData,
+        categoryId: selectedCategory.id,
+        productImage: base64Image || formData.productImage || props.product?.productImage || ''
+      };
 
-      if (props.product?.id) {
+      if (props.product?.productId) {
         await dispatch(modifyProduct(finalFormData));
-
-        console.log("Producto modificado:", finalFormData);
         toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       } else {
-        await dispatch(addProduct(finalFormData));
-
-        console.log("Producto agregado:", finalFormData);
+        await dispatch(createProduct(finalFormData));
         toast.success('Producto Creado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       }
 
-
+      /*
       setTimeout(() => {
         router.push('/Product');
       }, 1500);
+      */
 
     } catch (error) {
       console.error("Error al guardar el producto:", error);
@@ -159,7 +170,7 @@ export default function ProductView(props) {
             </Link>
           </div>
 
-          <h2 className="mb-4 text-xl font-bold text-gray-900">{props.product?.id ? 'Modificar Producto' : 'Registrar Producto Nuevo'}</h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-900">{props.product?.productId ? 'Modificar Producto' : 'Registrar Producto Nuevo'}</h2>
 
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -169,39 +180,39 @@ export default function ProductView(props) {
 
               {/* NAME */}
               <div className="w-full">
-                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Nombre del Producto</label>
+                <label htmlFor="productName" className="block mb-2 text-sm font-medium text-gray-900">Nombre del Producto</label>
                 <input
                   type="text"
-                  name="name"
-                  id="name"
+                  name="productName"
+                  id="productName"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   placeholder="Ingrese nombre del producto"
                   required
-                  value={formData.name}
+                  value={formData.productName}
                   onChange={handleChange}
                 />
               </div>
               {/* STOCK */}
               <div className="w-full">
-                <label htmlFor="stock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+                <label htmlFor="productStock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
                 <input
                   type="number"
-                  name="stock"
-                  id="stock"
+                  name="productStock"
+                  id="productStock"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   placeholder="15"
                   required
-                  value={formData.stock}
+                  value={formData.productStock}
                   onChange={handleChange}
                 />
               </div>
               {/* CATEGORY */}
               <div>
-                <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900">Categoría</label>
+                <label htmlFor="categoryId" className="block mb-2 text-sm font-medium text-gray-900">Categoría</label>
                 <select
-                  id="category"
+                  id="categoryId"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-                  name="category"
+                  name="categoryId"
                   value={selectedCategory?.id || ''}
                   onChange={handleCategoryChange}
                   required
@@ -216,35 +227,36 @@ export default function ProductView(props) {
               </div>
               {/* PRICE */}
               <div className="w-full">
-                <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900">Precio</label>
+                <label htmlFor="productPrice" className="block mb-2 text-sm font-medium text-gray-900">Precio</label>
                 <input
                   type="number"
-                  name="price"
-                  id="price"
+                  name="productPrice"
+                  id="productPrice"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                   placeholder="$100.00"
                   required
-                  value={formData.price}
+                  value={formData.productPrice}
                   onChange={handleChange}
                 />
               </div>
               {/* DESCRIPTION */}
               <div className="sm:col-span-2">
-                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
+                <label htmlFor="productDescription" className="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
                 <textarea
-                  id="description"
-                  name="description"
+                  id="productDescription"
+                  name="productDescription"
                   rows="8"
                   className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
                   placeholder="Ingresa una descripción del producto"
                   required
-                  value={formData.description}
+                  value={formData.productDescription}
                   onChange={handleChange}
                 ></textarea>
               </div>
+
               {/* IMAGE */}
               <div className="sm:col-span-2">
-                <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
+                <label htmlFor="productImage" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
                 <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
               </div>
             </div>

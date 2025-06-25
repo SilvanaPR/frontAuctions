@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-export default function SearchBar() {
+export default function SearchBar({ categories }) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("Todos");
 
@@ -14,7 +14,7 @@ export default function SearchBar() {
         setShowDropdown(false);
     };
 
-    const categories = ["Todos", "Nombre", "Categoría", "Precio"];
+    //const categories = ["Todos", "Nombre", "Categoría", "Precio"];
 
     return (
         <div className="max-w-lg mx-auto relative">

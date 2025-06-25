@@ -7,15 +7,15 @@ interface Category {
 }
 
 interface Product {
-  name: string,
-  category: number,
-  price: number,
-  description: string,
-  image: string,
-  stock: number,
-  id?: string | number,
-  availability: string,
-  user: string
+  productName: string,
+  categoryId: number,
+  productPrice: number,
+  productDescription: string,
+  productImage: string,
+  productStock: number,
+  productId?: string | number,
+  productAvilability: string,
+  productUserId: string
 }
 
 const initialState: {
@@ -25,6 +25,7 @@ const initialState: {
   loadingCategories: boolean,
   loadingProducts: boolean,
   loadingProduct: boolean,
+  loadingCreateProduct: boolean,
 } = {
   products: [],
   categories: [],
@@ -32,6 +33,7 @@ const initialState: {
   loadingCategories: false,
   loadingProducts: false,
   loadingProduct: false,
+  loadingCreateProduct: false,
 };
 
 
@@ -49,17 +51,17 @@ export const fetchCategories = createAsyncThunk(
 export const fetchProducts = createAsyncThunk(
   'product/fetchProducts',
   async () => {
-    const { data } = await apiProduct.get('/auctioneer/product?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
+    const { data } = await apiProduct.get('/auctioneer/product/Product-All?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
     return data.map((p: any) => ({
-      id: p.productId,
-      name: p.productName,
-      category: p.categoryId,
-      price: p.productPrice,
-      description: p.productDescription,
-      image: p.productImage,
-      stock: p.productStock,
-      availability: p.productAvilability,
-      user: p.productUserId
+      productId: p.productId,
+      productName: p.productName,
+      categoryId: p.categoryId,
+      productPrice: p.productPrice,
+      productDescription: p.productDescription,
+      productImage: p.productImage,
+      productStock: p.productStock,
+      productAvilability: p.productAvilability,
+      productUserId: p.productUserId
     }));
   }
 );
@@ -69,37 +71,43 @@ export const fetchProduct = createAsyncThunk(
   async (productId: string) => {
     const { data } = await apiProduct.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
     return {
-      id: data.productId,
-      name: data.productName,
-      category: data.categoryId,
-      price: data.productPrice,
-      description: data.productDescription,
-      image: data.productImage,
-      stock: data.productStock,
-      availability: data.productAvilability,
-      user: data.productUserId,
+      productId: p.productId,
+      productName: p.productName,
+      categoryId: p.categoryId,
+      productPrice: p.productPrice,
+      productDescription: p.productDescription,
+      productImage: p.productImage,
+      productStock: p.productStock,
+      productAvilability: p.productAvilability,
+      productUserId: p.productUserId
     };
   }
 );
 
-
+export const createProduct = createAsyncThunk(
+  'product/createProduct',
+  async (product: Product) => {
+    const { data } = await apiProduct.post(
+      `/auctioneer/product/Add-Product/7671574c-6fb8-43b7-98be-897a98c487a0`,
+      product
+    );
+    return data;
+  }
+);
 
 
 export const productSlice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    addProduct: (state, action: PayloadAction<Product>) => {
-      state.products = [...state.products, action.payload];
-    },
     deleteProduct: (state, action: PayloadAction<Product>) => {
-      state.products = state.products.filter(product => product.id !== action.payload.id);
+      //state.products = state.products.filter(product => product.id !== action.payload.id);
     },
     modifyProduct: (state, action: PayloadAction<Product>) => {
-      const index = state.products.findIndex(product => product.id === action.payload.id);
-      if (index !== -1) {
-        state.products[index] = action.payload;
-      }
+      //const index = state.products.findIndex(product => product.id === action.payload.id);
+      //if (index !== -1) {
+      //  state.products[index] = action.payload;
+      //}
     }
   },
   extraReducers: (builder) => {
@@ -140,12 +148,23 @@ export const productSlice = createSlice({
       .addCase(fetchProduct.rejected, (state, action) => {
         state.loadingProduct = false;
         console.error('Error fetching single product:', action.error.message);
+      })
+
+      .addCase(createProduct.pending, (state) => {
+        state.loadingCreateProduct = true;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.loadingCreateProduct = false;
+        state.currentProduct = action.payload;
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loadingCreateProduct = false;
+        console.error('Error creating product:', action.error.message);
       });
   }
 });
 
 export const {
-  addProduct,
   deleteProduct,
   modifyProduct,
 } = productSlice.actions;

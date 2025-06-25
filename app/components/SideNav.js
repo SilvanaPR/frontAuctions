@@ -9,6 +9,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [showProductSubmenu, setShowProductSubmenu] = useState(false);
   const [showConfigurationSubmenu, setShowConfigurationuctSubmenu] = useState(false);
   const [showAuctionSubmenu, setShowAuctionSubmenu] = useState(false);
+  const [showAuctionClientSubmenu, setShowAuctionClientSubmenu] = useState(false);
   const [showRoleSubmenu, setShowRoleSubmenu] = useState(false);
   const [showPaymentSubmenu, setShowPaymentSubmenu] = useState(false);
   const sidebar = useRef(null);
@@ -51,7 +52,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
           <Link href="/">
             <span
               className={`${sidebarExpanded ? "lg:hidden" : "block"
-                } welcome-step text-2xl font-medium tracking-tighter text-black focus:outline-none focus:ring whitespace-nowrap cursor-pointer`}
+                } welcome-step text-2xl font-medium tracking-tighter text-black focus:outline-none focus:ring whitespace-nowrap cursor-pointer mb-6`}
             >
               <Image
                 className="mt-2 mb- h-100 w-32"
@@ -66,7 +67,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
           <Link href="/">
             <Image
               className={`${!sidebarExpanded ? "lg:hidden" : "block"
-                } mt-1 mb-4 h-8 w-8`}
+                } mt-1 mb-8 h-8 w-8`}
               src="/clickbid logo.png"
               height={100}
               width={100}
@@ -77,14 +78,6 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
 
         {/* Links */}
         <div className="space-y-4">
-          {!sidebarExpanded && (
-            <p
-              className={`${sidebarExpanded ? "lg:hidden" : "block"
-                } px-2 text-xs font-base text-gray-400 uppercase`}
-            >
-              Actions
-            </p>
-          )}
 
           <ul className="space-y-2">
             {/* PRODUCTS */}
@@ -257,6 +250,90 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
               )}
             </li>
 
+            {/* AUCTIONS CLIENTS */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowAuctionClientSubmenu(!showAuctionClientSubmenu);
+                  } else {
+                    router.push("/AuctionClient");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-gavel"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385" /><path d="M6 9l4 4" /><path d="M13 10l-4 -4" /><path d="M3 21h7" /><path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z" /></svg>
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Subastas
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d={showAuctionClientSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                      />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showAuctionClientSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/AuctionClient"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Activas
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/AuctionClient/Won"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Ganadas
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
             {/* ROLES */}
             <li>
               <button
@@ -358,8 +435,8 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
               >
                 <div className="text-brand stroke-brand">
                   <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke-brand strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z" />
-                    <path stroke-brand strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
                   </svg>
                 </div>
 
@@ -412,6 +489,25 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             }ml-3 whitespace-nowrap `}
                         >
                           Seguridad
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User/Activity"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Historial de Actividad
                         </span>
                       </span>
                     </Link>
