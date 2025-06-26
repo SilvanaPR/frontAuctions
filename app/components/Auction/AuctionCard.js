@@ -1,7 +1,11 @@
 'use client'
+import { useState } from "react";
 import Link from "next/link";
+import PaymentModal from "./PaymentModal";
 
-export default function AuctionCard({ auction, onDeleteClick }) {
+export default function AuctionCard({ auction, onDeleteClick, paymentButton }) {
+    const [payment, setPayment] = useState(true);
+    const [showPayment, setShowPayment] = useState(false);
 
     return (
         <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
@@ -56,11 +60,22 @@ export default function AuctionCard({ auction, onDeleteClick }) {
                                     </div>
                                 </label>
 
-                                <div className="mb-2 mt-4">
+                                <div className="mt-8">
                                     <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
                                         Cantidad: {auction.prodQuantity}
                                     </span>
                                 </div>
+
+                                {paymentButton && (
+                                        <button
+                                            type="submit"
+                                            className={`px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200`}
+                                            onClick={() => setShowPayment(true)}
+                                            >
+                                            Pagar
+                                        </button  >
+                                )}
+                                
 
                             </div>
 
@@ -84,7 +99,7 @@ export default function AuctionCard({ auction, onDeleteClick }) {
                                 </p>
 
 
-
+                                {!paymentButton && (
                                 <div className="flex items-center gap-4">
 
                                     <Link href={`/Auction/${auction.id}`} className="flex items-center gap-1 rounded-lg p-2  text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900">
@@ -120,6 +135,9 @@ export default function AuctionCard({ auction, onDeleteClick }) {
                                     </button>
 
                                 </div>
+                                )}
+
+                                {showPayment && <PaymentModal message="Elegir metodo de pago" onClose={() => setShowPayment(false)} />}
                             </div>
                         </div>
                     </div>

@@ -87,6 +87,14 @@ export const fetchAuction = createAsyncThunk(
     }
 );
 
+export const createAuction = createAsyncThunk(
+  'auction/createAuction',
+  async (auction: Auction) => {
+    const { data } = await apiAuction.post(`/auctioneer/product/Add-Product/?userId=7671574c-6fb8-43b7-98be-897a98c487a0/${auction.productId}`, auction);
+    return data;
+  }
+);
+
 
 
 export const auctionSlice = createSlice({
