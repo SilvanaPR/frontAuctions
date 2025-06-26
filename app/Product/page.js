@@ -44,8 +44,9 @@ export default function Product() {
   };
 
   const handleConfirmDelete = () => {
+    console.log(productToDelete.productId);
     if (productToDelete) {
-      dispatch(deleteProduct(productToDelete));
+      dispatch(deleteProduct(productToDelete.productId));
       toast.success('Producto eliminado correctamente', {
         position: "bottom-right",
         className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',

@@ -130,6 +130,7 @@ export default function ProductView(props) {
       };
 
       if (props.product?.productId) {
+        console.log(finalFormData);
         await dispatch(updateProduct(finalFormData));
         toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       } else {
@@ -137,11 +138,10 @@ export default function ProductView(props) {
         toast.success('Producto Creado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       }
 
-      /*
       setTimeout(() => {
         router.push('/Product');
       }, 1500);
-      */
+
 
     } catch (error) {
       console.error("Error al guardar el producto:", error);

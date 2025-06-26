@@ -27,6 +27,7 @@ const initialState: {
   loadingProduct: boolean,
   loadingCreateProduct: boolean,
   loadingUpdateProduct: boolean,
+  loadingDeleteProduct: boolean,
 } = {
   products: [],
   categories: [],
@@ -35,9 +36,9 @@ const initialState: {
   loadingProducts: false,
   loadingProduct: false,
   loadingCreateProduct: false,
-  loadingUpdateProduct: false,
+  loadingUpdateProduct: false,  
+  loadingDeleteProduct: false,
 };
-
 
 export const fetchCategories = createAsyncThunk(
   'product/fetchCategories',
@@ -73,15 +74,15 @@ export const fetchProduct = createAsyncThunk(
   async (productId: string) => {
     const { data } = await apiProduct.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
     return {
-      productId: p.productId,
-      productName: p.productName,
-      categoryId: p.categoryId,
-      productPrice: p.productPrice,
-      productDescription: p.productDescription,
-      productImage: p.productImage,
-      productStock: p.productStock,
-      productAvilability: p.productAvilability,
-      productUserId: p.productUserId
+      productId: data.productId,
+      productName: data.productName,
+      categoryId: data.categoryId,
+      productPrice: data.productPrice,
+      productDescription: data.productDescription,
+      productImage: data.productImage,
+      productStock: data.productStock,
+      productAvilability: data.productAvilability,
+      productUserId: data.productUserId
     };
   }
 );
@@ -100,7 +101,16 @@ export const createProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   'product/updateProduct',
   async (product: Product) => {
-    const { data } = await apiProduct.put(`/auctioneer/product/Update-Product/${product.productId}`, product);
+    const { data } = await apiProduct.put(`/auctioneer/product/Delete-Product/${product.productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`, product);
+    return data;
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  'product/deleteProduct',
+  async (productId: string) => {
+    const { data } = await apiProduct.delete(`/auctioneer/product/Delete-Product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
+    console.log(data);
     return data;
   }
 );
@@ -108,11 +118,7 @@ export const updateProduct = createAsyncThunk(
 export const productSlice = createSlice({
   name: 'product',
   initialState,
-  reducers: {
-    deleteProduct: (state, action: PayloadAction<Product>) => {
-      //state.products = state.products.filter(product => product.id !== action.payload.id);
-    }
-  },
+  reducers: { },
   extraReducers: (builder) => {
     builder
       // CATEGORIAS
@@ -175,12 +181,21 @@ export const productSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.loadingUpdateProduct = false;
         console.error('Error updating product:', action.error.message);
+      })
+
+      .addCase(deleteProduct.pending, (state) => {
+        state.loadingDeleteProduct = true;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loadingDeleteProduct = false;
+        state.currentProduct = action.payload;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loadingDeleteProduct = false;
+        console.error('Error deleting product:', action.error.message);
       });
   }
 });
 
-export const {
-  deleteProduct,
-} = productSlice.actions;
 
 export default productSlice.reducer;
