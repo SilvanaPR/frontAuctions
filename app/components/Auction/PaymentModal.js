@@ -1,9 +1,20 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutPage from '../Payment/CheckoutPage';
+import { useEffect } from 'react';
+
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
+  throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+}
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 export default function PaymentModal({ onClose, message }) {
     const [paymentMethod, setPaymentMethod] = useState(null);
+    const amount = 49.99;
+
 
     const paymentMethods = [
         {
@@ -66,6 +77,18 @@ export default function PaymentModal({ onClose, message }) {
                 >
                     Pagar
                 </button>
+
+                <Elements 
+                    stripe={stripePromise}
+                    options={{
+                        mode: 'payment',
+                        amount:amount * 100,
+                        currency: 'usd',
+                        paymentMethodOrder: ['card']
+                    }}
+                >
+                  <CheckoutPage amount={amount} />
+                </Elements>
             </div>
         </div>
     );
