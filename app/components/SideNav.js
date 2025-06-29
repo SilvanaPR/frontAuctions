@@ -575,7 +575,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             : "opacity-100 block"
                             }ml-3 whitespace-nowrap `}
                         >
-                          Gestion de Pagos
+                          Gestion de Tarjetas
                         </span>
                       </span>
                     </Link>

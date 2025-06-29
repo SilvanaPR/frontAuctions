@@ -11,6 +11,7 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 }
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
+
 export default function PaymentModal({ onClose, message }) {
     const [paymentMethod, setPaymentMethod] = useState(null);
     const amount = 49.99;

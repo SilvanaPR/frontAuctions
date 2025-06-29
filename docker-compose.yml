@@ -12,8 +12,6 @@ services:
 
   db:
     image: postgres
-    build:
-      context: .
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: yeniree0813
