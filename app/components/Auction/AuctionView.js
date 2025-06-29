@@ -20,7 +20,7 @@ export default function AuctionView(props) {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const products = useSelector((state) => state.product.products);
     const [preview, setPreview] = useState(null);
-
+    const loadingAuction = useSelector((state) => state.auction.loadingAuction);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -73,8 +73,15 @@ export default function AuctionView(props) {
         if (props.auction?.id) {
             setFormData(props.auction);
             setImageFileBase64(props.auction.image);
+            const prod = products.find(p => p.productId === props.auction.product);
+            setSelectedProduct(prod || null);
+            if (prod && prod.productImage) {
+                setPreview(prod.productImage);
+            } else {
+                setPreview(null);
+            }
         }
-    }, [props.auction, dispatch]);
+    }, [props.auction, products]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -86,18 +93,18 @@ export default function AuctionView(props) {
 
     const handleProductChange = (e) => {
         const selectedId = e.target.value;
-        const productObject = products.find(prod => prod.id === selectedId);
+        const productObject = products.find(prod => prod.productId === selectedId);
         setSelectedProduct(productObject);
         setFormData(prev => ({
             ...prev,
-            product: productObject ? productObject.id : '',
+            product: productObject ? productObject.productId : '',
         }));
         handleImageChange(productObject);
     };
 
     const handleImageChange = (product) => {
-        if (product && product.image) {
-            setPreview(product.image);
+        if (product && product.productImage) {
+            setPreview(product.productImage);
         } else {
             setPreview(null);
         }
@@ -171,6 +178,16 @@ export default function AuctionView(props) {
         setShowModal(false);
         await executeSubmit();
     };
+
+    if (loadingAuction) {
+        return (
+            <div className="flex items-center justify-center h-screen w-full">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-brand border-e-transparent align-[-0.125em] text-brand" role="status">
+                    <span className="sr-only">Cargando subasta...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="items-center justify-center h-screen w-full">
@@ -356,14 +373,14 @@ export default function AuctionView(props) {
                                     id="product"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                                     name="product"
-                                    value={selectedProduct?.id || ''}
+                                    value={selectedProduct?.productId || ''}
                                     onChange={handleProductChange}
                                     required
                                 >
-                                    <option value="">Seleccione un producto</option>
+                                    <option key="default" value="">Seleccione un producto</option>
                                     {products.map((prod) => (
-                                        <option key={prod.id} value={prod.id}>
-                                            {prod.name}
+                                        <option key={prod.productId} value={prod.productId}>
+                                            {prod.productName}
                                         </option>
                                     ))}
                                 </select>

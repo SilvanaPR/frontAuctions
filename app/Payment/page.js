@@ -31,7 +31,13 @@ export default function CreatePayment() {
   };
 
   if (!clientSecret) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-brand border-e-transparent align-[-0.125em] text-brand" role="status">
+          <span className="sr-only">Cargando...</span>
+        </div>
+      </div>
+    );
   }
 
   return (

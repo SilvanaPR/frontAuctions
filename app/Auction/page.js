@@ -8,6 +8,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 
 export default function Auction() {
     const auctions = useSelector((state) => state.auction.auctions);
+    const loadingAuctions = useSelector((state) => state.auction.loadingAuctions);
     const dispatch = useDispatch()
     const [currentPage, setCurrentPage] = useState(1)
     const auctionsPerPage = 8
@@ -48,6 +49,16 @@ export default function Auction() {
         setShowModal(false);
         setAuctionToDelete(null);
     };
+
+    if (loadingAuctions) {
+        return (
+            <div className="flex items-center justify-center h-screen w-full">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-brand border-e-transparent align-[-0.125em] text-brand" role="status">
+                    <span className="sr-only">Cargando subastas...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <section className="">

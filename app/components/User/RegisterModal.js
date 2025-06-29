@@ -155,7 +155,7 @@ export default function RegisterModal({ onClose }) {
                     {/* USER TYPE */}
                     <div className="relative z-0 w-full mb-5 group mt-8">
                             <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                                <option value="">Seleccione un tipo de usuario</option>
+                                <option key="default" value="">Seleccione un tipo de usuario</option>
                                 <option value="auctioneer">Subastador</option>
                                 <option value="bidder">Postor</option>
                             </select>

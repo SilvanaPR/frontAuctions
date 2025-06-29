@@ -10,12 +10,14 @@ import ConfirmationModal from '../components/ConfirmationModal';
 export default function Product() {
   const products = useSelector((state) => state.product.products);
   const categories = useSelector((state) => state.product.categories);
+  const loading = useSelector((state) => state.product.loadingProducts);
   const dispatch = useDispatch();
   const [productsList, setProductList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
   const [showModal, setShowModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = productsList.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -43,26 +45,47 @@ export default function Product() {
     setShowModal(true);
   };
 
-  const handleConfirmDelete = () => {
-    console.log(productToDelete.productId);
+  const handleConfirmDelete = async () => {
     if (productToDelete) {
-      dispatch(deleteProduct(productToDelete.productId));
-      toast.success('Producto eliminado correctamente', {
-        position: "bottom-right",
-        className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
-      });
+      setLoadingDelete(true);
+      try {
+        await dispatch(deleteProduct(productToDelete.productId)).unwrap();
+        toast.success('Producto eliminado correctamente', {
+          position: "bottom-right",
+          className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',
+          autoClose: 3000,
+          closeOnClick: true,
+          draggable: true,
+        });
+      } catch (error) {
+        toast.error('No se pudo eliminar el producto', {
+          position: "bottom-right",
+          className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-red-100 text-red-700',
+          autoClose: 3000,
+          closeOnClick: true,
+          draggable: true,
+        });
+      }
+      setLoadingDelete(false);
+      setShowModal(false);
+      setProductToDelete(null);
     }
-    setShowModal(false);
-    setProductToDelete(null);
   };
 
   const handleCancelDelete = () => {
     setShowModal(false);
     setProductToDelete(null);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-brand border-e-transparent align-[-0.125em] text-brand" role="status">
+          <span className="sr-only">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="bg-gray-50 py-8 antialiased md:py-12">
@@ -95,7 +118,14 @@ export default function Product() {
             onCancel={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             message={"¿Estás seguro de eliminar este producto?"}
-          />
+            loading={loadingDelete}
+          >
+            {loadingDelete ? (
+              <div className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-red-600" role="status">
+                <span className="sr-only">Eliminando...</span>
+              </div>
+            ) : "Eliminar"}
+          </ConfirmationModal>
         )}
 
         <ToastContainer />

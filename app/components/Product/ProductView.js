@@ -17,6 +17,7 @@ export default function ProductView(props) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const loadingProduct = useSelector((state) => state.product.loadingProduct);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -110,6 +111,7 @@ export default function ProductView(props) {
 
     if (!selectedCategory) {
       setIsSubmitting(false);
+      toast.error('Por favor selecciona una categoría', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
       return;
     }
 
@@ -128,20 +130,22 @@ export default function ProductView(props) {
         categoryId: selectedCategory.id,
         productImage: base64Image || formData.productImage || props.product?.productImage || ''
       };
+      console.log(finalFormData);
 
+      let result;
       if (props.product?.productId) {
-        console.log(finalFormData);
-        await dispatch(updateProduct(finalFormData));
+        result = await dispatch(updateProduct(finalFormData));
+        if (result.error) throw new Error(result.error.message || "Error al modificar el producto");
         toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       } else {
-        await dispatch(createProduct(finalFormData));
+        result = await dispatch(createProduct(finalFormData));
+        if (result.error) throw new Error(result.error.message || "Error al crear el producto");
         toast.success('Producto Creado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       }
 
       setTimeout(() => {
         router.push('/Product');
       }, 1500);
-
 
     } catch (error) {
       console.error("Error al guardar el producto:", error);
@@ -156,6 +160,15 @@ export default function ProductView(props) {
     await executeSubmit();
   };
 
+  if (loadingProduct) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-brand border-e-transparent align-[-0.125em] text-brand" role="status">
+          <span className="sr-only">Cargando producto...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="items-center justify-center h-screen w-full">
@@ -217,7 +230,7 @@ export default function ProductView(props) {
                   onChange={handleCategoryChange}
                   required
                 >
-                  <option value="">Seleccione una categoría</option>
+                  <option key="default" value="">Seleccione una categoría</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}

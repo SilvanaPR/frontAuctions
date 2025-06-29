@@ -110,7 +110,6 @@ export const deleteProduct = createAsyncThunk(
   'product/deleteProduct',
   async (productId: string) => {
     const { data } = await apiProduct.delete(`/auctioneer/product/Delete-Product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
-    console.log(data);
     return data;
   }
 );

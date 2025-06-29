@@ -8,7 +8,11 @@ export default function ProductCard({ product, onDeleteClick }) {
       <div className="h-56 w-full">
         {/* IMAGE */}
         <a href="#">
-          <img className="mx-auto hidden h-full" src={product.productImage} alt={product.productName} />
+          <img
+            className="object-contain mx-auto h-full"
+            src={product.productImage}
+            alt={product.productName}
+          />
         </a>
       </div>
 

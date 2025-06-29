@@ -16,7 +16,7 @@ export default function AuctionCard({ auction, onDeleteClick, paymentButton }) {
 
                             { /* IMAGE */}
                             <a href="#" className="shrink-0 md:order-1">
-                                <img className="hidden h-20 w-20 dark:block" src={auction.image} />
+                                <img className=" h-20 w-20 dark:block" src={auction.image} />
                             </a>
 
                             { /* PRICES AND DATES */}

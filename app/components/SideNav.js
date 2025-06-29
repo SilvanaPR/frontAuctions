@@ -512,6 +512,25 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                       </span>
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/User/Auctions"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Historial de Subastas
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
                 </ul>
               )}
             </li>

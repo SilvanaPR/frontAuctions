@@ -71,16 +71,19 @@ export default function Configuration(user) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!isEditing) return setIsEditing(true);
+        if (!isEditing) {
+            setIsEditing(true);
+            return;
+        }
+        setShowModal(true);
+    };
 
+    const handleConfirmSave = async () => {
+        setShowModal(false);
         try {
             setIsSubmitting(true);
-
             const payload = { ...formData };
-
             console.log("Payload a enviar ⇢", payload);
-
-
             toast.success("Cambios guardados correctamente", {
                 position: "bottom-right",
                 className:
@@ -232,6 +235,14 @@ export default function Configuration(user) {
                     </div>
                 </div >
             </form >
+            {showModal && (
+                <ConfirmationModal
+                    onCancel={() => setShowModal(false)}
+                    onConfirm={handleConfirmSave}
+                    message={"¿Estás seguro de guardar los cambios?"}
+                    loading={isSubmitting}
+                />
+            )}
             <ToastContainer />
         </div >
 
