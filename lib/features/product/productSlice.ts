@@ -1,5 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiProduct } from '@/lib/axios';
+import { getCookie } from "cookies-next";
+
+
 
 interface Category {
   id: string;
@@ -36,7 +39,7 @@ const initialState: {
   loadingProducts: false,
   loadingProduct: false,
   loadingCreateProduct: false,
-  loadingUpdateProduct: false,  
+  loadingUpdateProduct: false,
   loadingDeleteProduct: false,
 };
 
@@ -53,21 +56,34 @@ export const fetchCategories = createAsyncThunk(
 
 export const fetchProducts = createAsyncThunk(
   'product/fetchProducts',
-  async () => {
-    const { data } = await apiProduct.get('/auctioneer/product/Product-All?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
-    return data.map((p: any) => ({
-      productId: p.productId,
-      productName: p.productName,
-      categoryId: p.categoryId,
-      productPrice: p.productPrice,
-      productDescription: p.productDescription,
-      productImage: p.productImage,
-      productStock: p.productStock,
-      productAvilability: p.productAvilability,
-      productUserId: p.productUserId
-    }));
+  async ({ token, userId }: { token: string, userId: string }, { rejectWithValue }) => {
+    try {
+      const { data } = await apiProduct.get(
+        `/auctioneer/product/Product-All?userId=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return data.map((p: any) => ({
+        productId: p.productId,
+        productName: p.productName,
+        categoryId: p.categoryId,
+        productPrice: p.productPrice,
+        productDescription: p.productDescription,
+        productImage: p.productImage,
+        productStock: p.productStock,
+        productAvilability: p.productAvilability,
+        productUserId: p.productUserId
+      }));
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
   }
 );
+
 
 export const fetchProduct = createAsyncThunk(
   'product/fetchSingleProduct',
@@ -117,7 +133,7 @@ export const deleteProduct = createAsyncThunk(
 export const productSlice = createSlice({
   name: 'product',
   initialState,
-  reducers: { },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       // CATEGORIAS

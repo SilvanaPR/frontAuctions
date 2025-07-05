@@ -6,6 +6,9 @@ import { fetchProducts, fetchCategories, deleteProduct } from "../../lib/feature
 import { ToastContainer, toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { useAuth } from '../../lib/contexts/auth';
+import { getCookie } from 'cookies-next';
+
 
 export default function Product() {
   const products = useSelector((state) => state.product.products);
@@ -22,11 +25,18 @@ export default function Product() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = productsList.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(productsList.length / productsPerPage);
+  const { token, userId } = useAuth();
+
 
   useEffect(() => {
-    dispatch(fetchProducts());
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    if (token && userId) {
+      dispatch(fetchProducts({ token, userId }));
+    } else {
+      console.warn("Token o userId no disponibles.");
+    }
+  }, [dispatch, token, userId]);
+
+
 
   useEffect(() => {
     setProductList(products.map((el) => ({

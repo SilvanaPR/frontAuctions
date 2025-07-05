@@ -1,79 +1,80 @@
 "use client";
-import keycloak from "@/lib/pkg/keycloak.js";
-import { deleteCookie, getCookie, setCookie } from "cookies-next";
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import keycloak from "@/lib/pkg/keycloak";
+import { setCookie, getCookie, deleteCookie } from "cookies-next";
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 
 const AuthContext = createContext({
     isAuthenticated: false,
     token: null,
     user: null,
     logout: () => { },
-    login: () => { },
 });
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState();
-    const [isAuthenticated, setAuth] = useState(null);
+    const [user, setUser] = useState(null);
+    const [isAuthenticated, setAuth] = useState(false);
     const [token, setToken] = useState(null);
     const isRun = useRef(false);
 
     const getUserInfo = async (token) => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM}/protocol/openid-connect/userinfo`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        if (res.status === 200) {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/realms/${process.env.NEXT_PUBLIC_KEYCLOAK_REALM}/protocol/openid-connect/userinfo`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             const data = await res.json();
             setUser(data);
+            console.log("User info fetched:", data);
+            debugger
             setAuth(true);
-        } else {
-            login();
+        } catch (error) {
+            console.error("Error fetching user info:", error);
         }
     };
 
     const login = async () => {
         if (isRun.current) return;
         isRun.current = true;
+
         keycloak
             .init({
                 onLoad: "login-required",
+                pkceMethod: "S256",
+                //checkLoginIframe: false,
             })
-            .then((res) => {
-                setAuth(res);
-                setCookie("access_token", keycloak?.token);
-                getUserInfo(keycloak?.token)
+            .then(async (authenticated) => {
+                if (authenticated) {
+                    setToken(keycloak.token);
+                    setCookie("access_token", keycloak.token);
+                    await getUserInfo(keycloak.token);
+                } else {
+                    console.warn("User not authenticated");
+                }
+            })
+            .catch((err) => {
+                console.error("Keycloak init error:", err);
             });
     };
 
-    const logout = useCallback(async () => {
-        keycloak.logout;
-        deleteCookie('access_token');
-        window.location.href =
-            "http://localhost:8080" +
-            `/realms/auth-demo/protocol/openid-connect/logout?post_logout_redirect_uri=${window.location.origin}&client_id=admin-client`;
+    const logout = useCallback(() => {
+        deleteCookie("access_token");
+        keycloak.logout({
+            redirectUri: window.location.origin,
+        });
     }, []);
 
     useEffect(() => {
-        if (!getCookie("access_token")) {
+        const existingToken = getCookie("access_token");
+        if (!existingToken) {
             login();
         } else {
-            setToken(getCookie("access_token"));
-            getUserInfo(getCookie("access_token"));
+            setToken(existingToken);
+            getUserInfo(existingToken);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -81,6 +82,7 @@ export const AuthProvider = ({ children }) => {
             value={{
                 isAuthenticated,
                 user,
+                userId: user?.sub,
                 token,
                 logout
             }}

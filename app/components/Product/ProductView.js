@@ -18,9 +18,10 @@ export default function ProductView(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const loadingProduct = useSelector((state) => state.product.loadingProduct);
+  const { token } = useAuth();
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchCategories(token));
   }, [dispatch]);
 
   const [formData, setFormData] = useState({

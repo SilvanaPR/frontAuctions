@@ -77,6 +77,8 @@ export default function Login() {
               <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                 Iniciar sesión
               </button>
+
+
               <p className="text-sm font-light text-gray-500 mt-4">
                 No tienes una cuenta?{' '}
                 <button
@@ -89,10 +91,14 @@ export default function Login() {
               </p>
 
             </form>
-            
+
+            <button onClick={() => console.log(login)} className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+              Iniciar Sesión Keycloak
+            </button>
+
             {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
             {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
-            
+
 
           </div>
         </div>
@@ -100,3 +106,25 @@ export default function Login() {
     </section>
   );
 }
+
+
+/*
+export default function Home() {
+  const { isAuthenticated, user, logout } = useAuth();
+  return (
+    <main className="flex min-h-screen w-full items-center justify-center">
+      {!isAuthenticated ? (
+        <button onClick={() => console.log(login)} className="bg-blue-600 text-white px-6 py-2 rounded-md">
+          Signin with keycloak
+        </button>
+      ) : (
+        <div className="text-center">
+          <div>{user?.name}</div>
+          <div>{user?.email}</div>
+          <button className="mt-5 bg-red-600 text-white px-6 py-2" onClick={() => logout()}>Logout</button>
+        </div>
+      )}
+    </main>
+  );
+}
+*/
