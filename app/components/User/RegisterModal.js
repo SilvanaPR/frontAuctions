@@ -14,12 +14,12 @@ export default function RegisterModal({ onClose }) {
         phone_number: '',
         user_type: ''
     });
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
-        ...prev,
-        [name]: value,
+            ...prev,
+            [name]: value,
         }));
     };
 
@@ -27,15 +27,8 @@ export default function RegisterModal({ onClose }) {
         e.preventDefault();
         console.log(formData);
 
-        if (formData.password !== formData.confirmed_password) {
-            toast.error("Las contraseñas no coinciden", { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-            return;
-        }
-        if (formData.password.length < 8) {
-            toast.error("La contraseña debe tener al menos 8 caracteres", { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-            return;
-        }
-        toast.success("Registro exitoso", { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+
+        //toast.success("Registro exitoso", { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
 
         onClose();
     };
@@ -50,17 +43,17 @@ export default function RegisterModal({ onClose }) {
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center mb-8">
                     Registrate!
                 </h1>
-                <form className="space-y-4" onSubmit={(e) => {handleSubmit(e)}}>
+                <form className="space-y-4" onSubmit={(e) => { handleSubmit(e) }}>
                     <div className="grid md:grid-cols-2 md:gap-6">
                         {/* NAME */}
                         <div className="relative z-0 w-full mb-5 group">
-                            <input 
-                                type="text" 
-                                name="first_name" 
-                                id="first_name" 
-                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                                placeholder=" " 
-                                required 
+                            <input
+                                type="text"
+                                name="first_name"
+                                id="first_name"
+                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                                placeholder=" "
+                                required
                                 value={formData.first_name}
                                 onChange={handleChange}
                             />
@@ -68,13 +61,13 @@ export default function RegisterModal({ onClose }) {
                         </div>
                         {/* LAST NAME */}
                         <div className="relative z-0 w-full mb-5 group">
-                            <input 
-                                type="text" 
-                                name="last_name" 
-                                id="last_name" 
-                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                                placeholder=" " 
-                                required 
+                            <input
+                                type="text"
+                                name="last_name"
+                                id="last_name"
+                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                                placeholder=" "
+                                required
                                 value={formData.last_name}
                                 onChange={handleChange}
                             />
@@ -83,12 +76,12 @@ export default function RegisterModal({ onClose }) {
                     </div>
                     {/* ADDRESS */}
                     <div className="relative z-0 w-full mb-5 group">
-                        <input 
-                            type="text" 
-                            name="adress" 
-                            id="adress" 
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                            placeholder=" " 
+                        <input
+                            type="text"
+                            name="adress"
+                            id="adress"
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                            placeholder=" "
                             required
                             value={formData.adress}
                             onChange={handleChange}
@@ -97,12 +90,12 @@ export default function RegisterModal({ onClose }) {
                     </div>
                     {/* EMAIL */}
                     <div className="relative z-0 w-full mb-5 group">
-                        <input 
-                            type="email" 
-                            name="email" 
-                            id="email" 
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                            placeholder=" " 
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                            placeholder=" "
                             required
                             value={formData.email}
                             onChange={handleChange}
@@ -111,12 +104,12 @@ export default function RegisterModal({ onClose }) {
                     </div>
                     {/* PASSWORD */}
                     <div className="relative z-0 w-full mb-5 group">
-                        <input 
-                            type="password" 
-                            name="password" 
-                            id="password" 
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                            placeholder=" " 
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                            placeholder=" "
                             required
                             value={formData.password}
                             onChange={handleChange}
@@ -125,12 +118,12 @@ export default function RegisterModal({ onClose }) {
                     </div>
                     {/* CONFIRMED PASSWORD */}
                     <div className="relative z-0 w-full mb-5 group">
-                        <input 
-                            type="password" 
-                            name="confirmed_password" 
-                            id="confirmed_password" 
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                            placeholder=" " 
+                        <input
+                            type="password"
+                            name="confirmed_password"
+                            id="confirmed_password"
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                            placeholder=" "
                             required
                             value={formData.confirmed_password}
                             onChange={handleChange}
@@ -139,26 +132,26 @@ export default function RegisterModal({ onClose }) {
                     </div>
                     {/* PHONE NUMBER */}
                     <div className="relative z-0 w-full mb-5 group">
-                            <input 
-                                type="tel" 
-                                pattern="[0-9]{11}" 
-                                name="phone_number" 
-                                id="phone_number" 
-                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer" 
-                                placeholder=" " 
-                                required
-                                value={formData.phone_number}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="phone_number" className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Número de teléfono (4127795032)</label>
+                        <input
+                            type="tel"
+                            pattern="[0-9]{11}"
+                            name="phone_number"
+                            id="phone_number"
+                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                            placeholder=" "
+                            required
+                            value={formData.phone_number}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="phone_number" className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Número de teléfono (4127795032)</label>
                     </div>
                     {/* USER TYPE */}
                     <div className="relative z-0 w-full mb-5 group mt-8">
-                            <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                                <option key="default" value="">Seleccione un tipo de usuario</option>
-                                <option value="auctioneer">Subastador</option>
-                                <option value="bidder">Postor</option>
-                            </select>
+                        <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                            <option key="default" value="">Seleccione un tipo de usuario</option>
+                            <option value="auctioneer">Subastador</option>
+                            <option value="bidder">Postor</option>
+                        </select>
                     </div>
                     <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         Registrarse

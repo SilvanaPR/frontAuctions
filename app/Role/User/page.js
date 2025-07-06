@@ -1,56 +1,54 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import SearchBar from "../components/SearchBar";
-import ListModal from "../components/ListModal"; // Assuming you have a ListModal component
-import { permission } from "process";
+import SearchBar from "../../components/SearchBar";
+import ListModal from "../../components/ListModal";
 
 export default function Roles() {
     const [currentPage, setCurrentPage] = useState(1);
-    const rolesPerPage = 8;
-    const indexOfLastRol = currentPage * rolesPerPage;
-    const indexOfFirstRol = indexOfLastRol - rolesPerPage;
+    const usersPerPage = 8;
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const [showList, setShowList] = useState(false);
-    const [selectedPermissions, setSelectedPermissions] = useState([]);
+    const [selectedRoles, setSelectedRoles] = useState([]);
 
 
-    const rolesList = [
+    const usersList = [
         {
             id: 1,
-            rol: "Rol 1",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 3, name: "Permiso 3" }
+            user: "User 1",
+            roles: [
+                { id: 1, name: "Rol 1" },
+                { id: 3, name: "Rol 3" }
             ]
         },
         {
             id: 2,
-            rol: "Rol 2",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 2, name: "Permiso 2" },
-                { id: 3, name: "Permiso 3" }
+            user: "user 2",
+            roles: [
+                { id: 1, name: "Rol 1" },
+
             ]
         },
         {
             id: 3,
-            rol: "Rol 3",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 2, name: "Permiso 2" },
-                { id: 3, name: "Permiso 3" }
+            user: "user 3",
+            roles: [
+                { id: 1, name: "Rol 1" },
+                { id: 2, name: "Rol 2" },
+                { id: 3, name: "Rol 3" }
             ]
         }
     ];
 
-    const allPermissions = [
-        { id: 1, name: "Permiso 1" },
-        { id: 2, name: "Permiso 2" },
-        { id: 3, name: "Permiso 3" },
-        { id: 4, name: "Permiso 4" },
+    const allRoles = [
+        { id: 1, name: "Rol 1" },
+        { id: 2, name: "Rol 2" },
+        { id: 3, name: "Rol 3" },
+        { id: 4, name: "Rol 4" },
     ];
 
 
-    const totalPages = Math.ceil(rolesList.length / rolesPerPage);
+    const totalPages = Math.ceil(usersList.length / usersPerPage);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -69,18 +67,18 @@ export default function Roles() {
                         <table className="w-full text-sm text-left text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
                                 <tr>
-                                    <th scope="col" className="px-4 py-3 text-center">Rol</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Usuario</th>
                                     <th scope="col" className="px-4 py-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {rolesList.map((r) => (
-                                    <tr key={r.id} className="border-b">
-                                        <th className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">{r.rol}</th>
+                                {usersList.map((u) => (
+                                    <tr key={u.id} className="border-b">
+                                        <th className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">{u.user}</th>
                                         <td className="px-6 py-4 flex justify-center items-center space-x-4">
                                             <button
                                                 onClick={() => {
-                                                    setSelectedPermissions(r.permissions);
+                                                    setSelectedRoles(u.roles);
                                                     setShowList(true);
                                                 }}
                                                 className="text-gray-500 hover:text-gray-900"
@@ -114,9 +112,9 @@ export default function Roles() {
                 {showList && (
                     <ListModal
                         onClose={() => setShowList(false)}
-                        list={allPermissions}
-                        selectedList={selectedPermissions}
-                        screen={'role'}
+                        list={allRoles}
+                        selectedList={selectedRoles}
+                        screen={'user'}
                     />
                 )}
 

@@ -382,7 +382,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                     <Link
                       onClick={() => setSidebarOpen(false)}
                       name={Link.name}
-                      href="/User"
+                      href="/Role"
                       className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
                     >
                       <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
@@ -392,7 +392,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             : "opacity-100 block"
                             }ml-3 whitespace-nowrap `}
                         >
-                          Gestion de Roles
+                          Roles y Permisos
                         </span>
                       </span>
                     </Link>
@@ -401,7 +401,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                     <Link
                       onClick={() => setSidebarOpen(false)}
                       name={Link.name}
-                      href="/User/Create"
+                      href="/Role/User"
                       className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
                     >
                       <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
@@ -411,7 +411,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             : "opacity-100 block"
                             }ml-3 whitespace-nowrap `}
                         >
-                          Crear Rol
+                          Usuarios y Roles
                         </span>
                       </span>
                     </Link>
