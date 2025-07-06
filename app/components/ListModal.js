@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
-export default function ListModal({ onClose, list, selectedList, screen }) {
+export default function ListModal({ onClose, list, selectedList, screen, onSubmit }) {
     const [formData, setFormData] = useState({
         lists: []
     });
 
-    // Inicializa todos los ítems posibles
     useEffect(() => {
         if (list && Array.isArray(list)) {
             setFormData((prev) => ({
@@ -17,7 +16,6 @@ export default function ListModal({ onClose, list, selectedList, screen }) {
         }
     }, [list]);
 
-    // Carga los ítems seleccionados del usuario o rol
     useEffect(() => {
         if (selectedList && Array.isArray(selectedList)) {
             setFormData((prev) => ({
@@ -44,14 +42,7 @@ export default function ListModal({ onClose, list, selectedList, screen }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Seleccionados:", formData.lists);
-
-        toast.success("Registro exitoso", {
-            position: "bottom-right",
-            className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',
-        });
-
-        onClose();
+        onSubmit(formData.lists);
     };
 
     return (
@@ -90,7 +81,7 @@ export default function ListModal({ onClose, list, selectedList, screen }) {
                         </div>
 
                         <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Crear
+                            Guardar
                         </button>
                     </form>
                 </div>

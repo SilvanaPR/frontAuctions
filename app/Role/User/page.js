@@ -1,16 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SearchBar from "../../components/SearchBar";
 import ListModal from "../../components/ListModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
-export default function Roles() {
+export default function Users() {
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 8;
-    const indexOfLastUser = currentPage * usersPerPage;
-    const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const [showList, setShowList] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [selectedRoles, setSelectedRoles] = useState([]);
-
+    const [pendingSubmitData, setPendingSubmitData] = useState(null);
 
     const usersList = [
         {
@@ -26,7 +26,6 @@ export default function Roles() {
             user: "user 2",
             roles: [
                 { id: 1, name: "Rol 1" },
-
             ]
         },
         {
@@ -47,7 +46,6 @@ export default function Roles() {
         { id: 4, name: "Rol 4" },
     ];
 
-
     const totalPages = Math.ceil(usersList.length / usersPerPage);
 
     const handlePageChange = (pageNumber) => {
@@ -55,8 +53,34 @@ export default function Roles() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const openListModal = (roles) => {
+        setSelectedRoles(roles);
+        setShowList(true);
+    };
+
+    const handleConfirmSubmit = () => {
+        if (pendingSubmitData) {
+            console.log("Datos confirmados para enviar:", pendingSubmitData);
+            // Aquí haces la lógica real, p.ej., actualizar usuario en backend
+
+            setShowConfirm(false);
+            setShowList(false);
+            setPendingSubmitData(null);
+        }
+    };
+
+    const handleCancelSubmit = () => {
+        setShowConfirm(false);
+        setPendingSubmitData(null);
+    };
+
+    const handleFormSubmit = (formData) => {
+        setPendingSubmitData(formData);
+        setShowConfirm(true);
+    };
+
     return (
-        <section className="bg-gray-50p-3 sm:p-5">
+        <section className="bg-gray-50 p-3 sm:p-5">
             <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
 
                 <SearchBar categories={["Todos", "Fecha", "Inicio de Sesion", "Cambio de Contraseña", "Actualización de Perfil"]} />
@@ -77,10 +101,7 @@ export default function Roles() {
                                         <th className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">{u.user}</th>
                                         <td className="px-6 py-4 flex justify-center items-center space-x-4">
                                             <button
-                                                onClick={() => {
-                                                    setSelectedRoles(u.roles);
-                                                    setShowList(true);
-                                                }}
+                                                onClick={() => openListModal(u.roles)}
                                                 className="text-gray-500 hover:text-gray-900"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5">
@@ -94,14 +115,13 @@ export default function Roles() {
                         </table>
                     </div>
 
-
                     <div className="flex justify-center my-8 space-x-2">
                         {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
                             <button
                                 key={number}
                                 onClick={() => handlePageChange(number)}
                                 className={`px-4 py-2 rounded-md text-sm font-medium border 
-                            ${currentPage === number ? 'bg-brand text-white' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                                ${currentPage === number ? 'bg-brand text-white' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
                             >
                                 {number}
                             </button>
@@ -115,14 +135,18 @@ export default function Roles() {
                         list={allRoles}
                         selectedList={selectedRoles}
                         screen={'user'}
+                        onSubmit={handleFormSubmit}
                     />
                 )}
 
-
-
-
-
-
+                {showConfirm && (
+                    <ConfirmationModal
+                        message="¿Confirmas los cambios en los roles?"
+                        onCancel={handleCancelSubmit}
+                        onConfirm={handleConfirmSubmit}
+                        loading={false}
+                    />
+                )}
             </div>
         </section>
     );
