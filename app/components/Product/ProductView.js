@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from '../ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
+import { useAuth } from '../../../lib/contexts/auth';
+
 
 export default function ProductView(props) {
   const [imageFileBase64, setImageFileBase64] = useState('');
@@ -18,7 +20,8 @@ export default function ProductView(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const loadingProduct = useSelector((state) => state.product.loadingProduct);
-  const { token } = useAuth();
+  const { token, userId } = useAuth();
+
 
   useEffect(() => {
     dispatch(fetchCategories(token));

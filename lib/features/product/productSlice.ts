@@ -60,6 +60,7 @@ export const fetchProducts = createAsyncThunk(
     try {
       const { data } = await apiProduct.get(
         `/auctioneer/product/Product-All?userId=${userId}`,
+        //`/auctioneer/product/Product-All?userId=7671574c-6fb8-43b7-98be-897a98c487a0`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,21 +88,38 @@ export const fetchProducts = createAsyncThunk(
 
 export const fetchProduct = createAsyncThunk(
   'product/fetchSingleProduct',
-  async (productId: string) => {
-    const { data } = await apiProduct.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
-    return {
-      productId: data.productId,
-      productName: data.productName,
-      categoryId: data.categoryId,
-      productPrice: data.productPrice,
-      productDescription: data.productDescription,
-      productImage: data.productImage,
-      productStock: data.productStock,
-      productAvilability: data.productAvilability,
-      productUserId: data.productUserId
-    };
+  async (
+    { productId, token, userId }: { productId: string; token: string; userId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiProduct.get(
+        `/auctioneer/product/${productId}?userId=${userId}`,
+        //`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return {
+        productId: data.productId,
+        productName: data.productName,
+        categoryId: data.categoryId,
+        productPrice: data.productPrice,
+        productDescription: data.productDescription,
+        productImage: data.productImage,
+        productStock: data.productStock,
+        productAvilability: data.productAvilability,
+        productUserId: data.productUserId,
+      };
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
   }
 );
+
 
 export const createProduct = createAsyncThunk(
   'product/createProduct',
