@@ -25,16 +25,12 @@ export default function Product() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = productsList.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(productsList.length / productsPerPage);
-  const { token, userId } = useAuth();
+
 
 
   useEffect(() => {
-    if (token && userId) {
-      dispatch(fetchProducts({ token, userId }));
-    } else {
-      console.warn("Token o userId no disponibles.");
-    }
-  }, [dispatch, token, userId]);
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
 
 
@@ -61,8 +57,6 @@ export default function Product() {
       try {
         await dispatch(deleteProduct({
           productId: productToDelete.productId,
-          token: token,
-          userId: userId
         })).unwrap();
 
 

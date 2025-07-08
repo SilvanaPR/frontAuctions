@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiProduct } from '@/lib/axios';
 import { getCookie } from "cookies-next";
-
+import { getAuthData } from '@/lib/utils/authHelpers';
+import { useAuth } from '@/lib/contexts/auth';
 
 
 interface Category {
@@ -56,17 +57,13 @@ export const fetchCategories = createAsyncThunk(
 
 export const fetchProducts = createAsyncThunk(
   'product/fetchProducts',
-  async ({ token, userId }: { token: string, userId: string }, { rejectWithValue }) => {
+  async (_: void, { rejectWithValue }) => {
     try {
+      const { userId } = getAuthData();
+      debugger
       const { data } = await apiProduct.get(
-        `/auctioneer/product/Product-All?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/auctioneer/product/Product-All?userId=${userId}`
       );
-
       return data.map((p: any) => ({
         productId: p.productId,
         productName: p.productName,
@@ -88,17 +85,13 @@ export const fetchProducts = createAsyncThunk(
 export const fetchProduct = createAsyncThunk(
   'product/fetchSingleProduct',
   async (
-    { productId, token, userId }: { productId: string; token: string; userId: string },
+    { productId }: { productId: string },
     { rejectWithValue }
   ) => {
     try {
+      const { userId } = getAuthData();
       const { data } = await apiProduct.get(
-        `/auctioneer/product/${productId}?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/auctioneer/product/${productId}?userId=${userId}`
       );
 
       return {
@@ -122,18 +115,14 @@ export const fetchProduct = createAsyncThunk(
 export const createProduct = createAsyncThunk(
   'product/createProduct',
   async (
-    { product, token, userId }: { product: Product; token: string; userId: string },
+    { product }: { product: Product },
     { rejectWithValue }
   ) => {
     try {
+      const { userId } = getAuthData();
       const { data } = await apiProduct.post(
         `/auctioneer/product/Add-Product/${userId}`,
-        product,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {...product, productUserId: userId}
       );
       return data;
     } catch (err: any) {
@@ -146,22 +135,14 @@ export const createProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   'product/updateProduct',
   async (
-    {
-      product,
-      token,
-      userId,
-    }: { product: Product; token: string; userId: string },
+    { product }: { product: Product },
     { rejectWithValue }
   ) => {
     try {
+      const { userId } = getAuthData();
       const { data } = await apiProduct.put(
         `/auctioneer/product/Update-Product/${product.productId}?userId=${userId}`,
-        product,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {...product, productUserId: userId}
       );
       return data;
     } catch (err: any) {
@@ -174,21 +155,13 @@ export const updateProduct = createAsyncThunk(
 export const deleteProduct = createAsyncThunk(
   'product/deleteProduct',
   async (
-    {
-      productId,
-      token,
-      userId,
-    }: { productId: string; token: string; userId: string },
+    { productId }: { productId: string },
     { rejectWithValue }
   ) => {
     try {
+      const { userId } = getAuthData();
       const { data } = await apiProduct.delete(
-        `/auctioneer/product/Delete-Product/${productId}?userId=${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/auctioneer/product/Delete-Product/${productId}?userId=${userId}`
       );
       return data;
     } catch (err: any) {

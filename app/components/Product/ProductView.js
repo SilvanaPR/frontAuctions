@@ -20,17 +20,11 @@ export default function ProductView(props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const loadingProduct = useSelector((state) => state.product.loadingProduct);
-  const { token, userId } = useAuth();
-
 
 
   useEffect(() => {
-    if (token && userId) {
-      dispatch(fetchCategories(token));
-    } else {
-      console.warn("Token o userId no disponibles.");
-    }
-  }, [dispatch, token, userId]);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
 
   const [formData, setFormData] = useState({
@@ -139,17 +133,13 @@ export default function ProductView(props) {
         ...formData,
         categoryId: selectedCategory.id,
         productImage: base64Image || formData.productImage || props.product?.productImage || '',
-        productUserId: userId,
       };
-      console.log(finalFormData);
 
       let result;
       if (props.product?.productId) {
 
         result = await dispatch(updateProduct({
           product: finalFormData,
-          token: token,
-          userId: userId
         }));
 
         if (result.error) throw new Error(result.error.message || "Error al modificar el producto");
@@ -159,8 +149,6 @@ export default function ProductView(props) {
 
         result = await dispatch(createProduct({
           product: finalFormData,
-          token: token,
-          userId: userId
         }));
 
 

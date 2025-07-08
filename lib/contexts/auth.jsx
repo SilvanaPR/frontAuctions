@@ -7,6 +7,7 @@ const AuthContext = createContext({
     isAuthenticated: false,
     token: null,
     user: null,
+    userId: null,
     logout: () => { },
 });
 
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }) => {
             );
             const data = await res.json();
             setUser(data);
+            setCookie("userId", data?.sub);
             setAuth(true);
         } catch (error) {
             console.error("Error fetching user info:", error);
