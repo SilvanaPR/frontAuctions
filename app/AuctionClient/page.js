@@ -54,8 +54,10 @@ export default function ActiveAuctions() {
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 
                 {(currentAuctions ?? []).map((auction) => (
-                    <AuctionCard key={auction.id} auction={auction} onDeleteClick={() => confirmDelete(auction)} />
+                    <AuctionCard key={auction.id} auction={auction} context={"bid"} onDeleteClick={() => confirmDelete(auction)} />
                 ))}
+                {console.log(currentAuctions)}
+
                 <div className="mt-8 flex justify-center gap-2">
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button

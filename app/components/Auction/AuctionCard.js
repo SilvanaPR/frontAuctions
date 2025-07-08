@@ -3,7 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import PaymentModal from "./PaymentModal";
 
-export default function AuctionCard({ auction, onDeleteClick, paymentButton }) {
+
+export default function AuctionCard({ auction, onDeleteClick, context }) {
     const [payment, setPayment] = useState(true);
     const [showPayment, setShowPayment] = useState(false);
 
@@ -66,16 +67,24 @@ export default function AuctionCard({ auction, onDeleteClick, paymentButton }) {
                                     </span>
                                 </div>
 
-                                {paymentButton && (
-                                        <button
-                                            type="submit"
-                                            className={`px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200`}
-                                            onClick={() => setShowPayment(true)}
-                                            >
-                                            Pagar
-                                        </button  >
+                                {context === "payment" && (
+                                    <button
+                                        type="submit"
+                                        className={`px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand rounded-lg focus:ring-4 focus:ring-primary-200`}
+                                        onClick={() => setShowPayment(true)}
+                                    >
+                                        Pagar
+                                    </button  >
                                 )}
-                                
+
+                                {context === "bid" && (
+                                    <Link
+                                        href={`/AuctionClient/${auction.id}`}
+                                        className="flex justify-center items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-brand hover:bg-brandLight rounded-lg focus:ring-4 focus:ring-primary-200"
+                                    >
+                                        Pujar
+                                    </Link>
+                                )}
 
                             </div>
 
@@ -99,42 +108,42 @@ export default function AuctionCard({ auction, onDeleteClick, paymentButton }) {
                                 </p>
 
 
-                                {!paymentButton && (
-                                <div className="flex items-center gap-4">
+                                {context === "manage" && (
+                                    <div className="flex items-center gap-4">
 
-                                    <Link href={`/Auction/${auction.id}`} className="flex items-center gap-1 rounded-lg p-2  text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                                        </svg>
-                                        Modificar
-                                    </Link>
+                                        <Link href={`/Auction/${auction.id}`} className="flex items-center gap-1 rounded-lg p-2  text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                            </svg>
+                                            Modificar
+                                        </Link>
 
-                                    <button
-                                        type="button"
-                                        id={`Delete-${auction.id}`}
-                                        className="flex items-center gap-1 rounded-lg p-2  text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                                        onClick={onDeleteClick}
-                                    >
-                                        <span className="sr-only">Borrar</span>
-                                        <svg
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
+                                        <button
+                                            type="button"
+                                            id={`Delete-${auction.id}`}
+                                            className="flex items-center gap-1 rounded-lg p-2  text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                            onClick={onDeleteClick}
                                         >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM3 5h18M19 7l-.866 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7h14Z"
-                                            />
-                                        </svg>
-                                        <span>Eliminar</span>
-                                    </button>
+                                            <span className="sr-only">Borrar</span>
+                                            <svg
+                                                className="h-5 w-5"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke="currentColor"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM3 5h18M19 7l-.866 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7h14Z"
+                                                />
+                                            </svg>
+                                            <span>Eliminar</span>
+                                        </button>
 
-                                </div>
+                                    </div>
                                 )}
 
                                 {showPayment && <PaymentModal message="Elegir metodo de pago" onClose={() => setShowPayment(false)} />}
