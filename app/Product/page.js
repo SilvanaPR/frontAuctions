@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import SearchBar from '../components/SearchBar';
 import ConfirmationModal from '../components/ConfirmationModal';
 import { useAuth } from '../../lib/contexts/auth';
-import { getCookie } from 'cookies-next';
+
 
 
 export default function Product() {
@@ -59,7 +59,13 @@ export default function Product() {
     if (productToDelete) {
       setLoadingDelete(true);
       try {
-        await dispatch(deleteProduct(productToDelete.productId)).unwrap();
+        await dispatch(deleteProduct({
+          productId: productToDelete.productId,
+          token: token,
+          userId: userId
+        })).unwrap();
+
+
         toast.success('Producto eliminado correctamente', {
           position: "bottom-right",
           className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',

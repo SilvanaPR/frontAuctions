@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { createProduct, updateProduct, fetchCategories, fetchProduct } from "../../../lib/features/product/productSlice";
+import { fetchCategories } from "../../../lib/features/product/productSlice";
 import ConfirmationModal from '../ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -39,9 +39,9 @@ export default function ProductView(props) {
     setIsSubmitting(true);
 
     try {
-        console.log(formData);
-        //await dispatch(createProduct(formData));
-        toast.success('Tarjeta Creada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+      console.log(formData);
+      //await dispatch(createProduct(formData));
+      toast.success('Tarjeta Creada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
 
 
     } catch (error) {
@@ -69,7 +69,7 @@ export default function ProductView(props) {
             e.preventDefault();
             setShowModal(true);
           }}>
-             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
 
               {/* NAME */}
               <div className="sm:col-span-2">

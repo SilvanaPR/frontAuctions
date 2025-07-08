@@ -23,9 +23,15 @@ export default function ProductView(props) {
   const { token, userId } = useAuth();
 
 
+
   useEffect(() => {
-    dispatch(fetchCategories(token));
-  }, [dispatch]);
+    if (token && userId) {
+      dispatch(fetchCategories(token));
+    } else {
+      console.warn("Token o userId no disponibles.");
+    }
+  }, [dispatch, token, userId]);
+
 
   const [formData, setFormData] = useState({
     productId: '',
@@ -36,7 +42,7 @@ export default function ProductView(props) {
     productAvilability: 'Disponible',
     productStock: '',
     categoryId: '',
-    productUserId: '7671574c-6fb8-43b7-98be-897a98c487a0'
+    productUserId: ''
   });
 
   useEffect(() => {
@@ -132,17 +138,32 @@ export default function ProductView(props) {
       const finalFormData = {
         ...formData,
         categoryId: selectedCategory.id,
-        productImage: base64Image || formData.productImage || props.product?.productImage || ''
+        productImage: base64Image || formData.productImage || props.product?.productImage || '',
+        productUserId: userId,
       };
       console.log(finalFormData);
 
       let result;
       if (props.product?.productId) {
-        result = await dispatch(updateProduct(finalFormData));
+
+        result = await dispatch(updateProduct({
+          product: finalFormData,
+          token: token,
+          userId: userId
+        }));
+
         if (result.error) throw new Error(result.error.message || "Error al modificar el producto");
         toast.success('Producto Modificado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
+
       } else {
-        result = await dispatch(createProduct(finalFormData));
+
+        result = await dispatch(createProduct({
+          product: finalFormData,
+          token: token,
+          userId: userId
+        }));
+
+
         if (result.error) throw new Error(result.error.message || "Error al crear el producto");
         toast.success('Producto Creado Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
       }

@@ -60,7 +60,6 @@ export const fetchProducts = createAsyncThunk(
     try {
       const { data } = await apiProduct.get(
         `/auctioneer/product/Product-All?userId=${userId}`,
-        //`/auctioneer/product/Product-All?userId=7671574c-6fb8-43b7-98be-897a98c487a0`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,7 +94,6 @@ export const fetchProduct = createAsyncThunk(
     try {
       const { data } = await apiProduct.get(
         `/auctioneer/product/${productId}?userId=${userId}`,
-        //`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -123,30 +121,82 @@ export const fetchProduct = createAsyncThunk(
 
 export const createProduct = createAsyncThunk(
   'product/createProduct',
-  async (product: Product) => {
-    const { data } = await apiProduct.post(
-      `/auctioneer/product/Add-Product/7671574c-6fb8-43b7-98be-897a98c487a0`,
-      product
-    );
-    return data;
+  async (
+    { product, token, userId }: { product: Product; token: string; userId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiProduct.post(
+        `/auctioneer/product/Add-Product/${userId}`,
+        product,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
   }
 );
+
 
 export const updateProduct = createAsyncThunk(
   'product/updateProduct',
-  async (product: Product) => {
-    const { data } = await apiProduct.put(`/auctioneer/product/Delete-Product/${product.productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`, product);
-    return data;
+  async (
+    {
+      product,
+      token,
+      userId,
+    }: { product: Product; token: string; userId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiProduct.put(
+        `/auctioneer/product/Update-Product/${product.productId}?userId=${userId}`,
+        product,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
   }
 );
 
+
 export const deleteProduct = createAsyncThunk(
   'product/deleteProduct',
-  async (productId: string) => {
-    const { data } = await apiProduct.delete(`/auctioneer/product/Delete-Product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
-    return data;
+  async (
+    {
+      productId,
+      token,
+      userId,
+    }: { productId: string; token: string; userId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiProduct.delete(
+        `/auctioneer/product/Delete-Product/${productId}?userId=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
   }
 );
+
 
 export const productSlice = createSlice({
   name: 'product',
