@@ -7,178 +7,15 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
 import ConfirmationModal from "../ConfirmationModal";
+import BidModal from "./BidModal";
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function AuctionBid(props) {
-    const [imageFileBase64, setImageFileBase64] = useState('');
-    const [imageFileRaw, setImageFileRaw] = useState(null);
-    const dispatch = useDispatch();
-    const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const datepickerRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const products = useSelector((state) => state.product.products);
-    const [preview, setPreview] = useState(null);
+
     const loadingAuction = useSelector((state) => state.auction.loadingAuction);
+    const [showManual, setShowManual] = useState(false);
+    const [showAuto, setShowAuto] = useState(false);
 
-    const [formData, setFormData] = useState({
-        name: '',
-        basePrice: '',
-        description: '',
-        product: '',
-        initDate: '',
-        endDate: '',
-        conditions: '',
-        minIncrement: '',
-        resPrice: '',
-        initHour: '00:00',
-        endHour: '00:00',
-    });
-
-    useEffect(() => {
-        console.log(props);
-        dispatch(fetchProducts());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const initDateEl = document.getElementById("initdate");
-            if (initDateEl) {
-                const datepicker = new Datepicker(initDateEl);
-                const onChange = (event) => {
-                    setFormData(prev => ({ ...prev, initDate: event.target.value }));
-                };
-                initDateEl.addEventListener('changeDate', onChange);
-                return () => initDateEl.removeEventListener('changeDate', onChange);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const endDateEl = document.getElementById("endDate");
-            if (endDateEl) {
-                const datepicker = new Datepicker(endDateEl);
-                const onChange = (event) => {
-                    setFormData(prev => ({ ...prev, endDate: event.target.value }));
-                };
-                endDateEl.addEventListener('changeDate', onChange);
-                return () => endDateEl.removeEventListener('changeDate', onChange);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        console.log(props.auction)
-        if (props.auction?.id) {
-            setFormData(props.auction);
-            setImageFileBase64(props.auction.image);
-            const prod = products.find(p => p.productId === props.auction.product);
-            setSelectedProduct(prod || null);
-            if (prod && prod.productImage) {
-                setPreview(prod.productImage);
-            } else {
-                setPreview(null);
-            }
-        }
-    }, [props.auction, products]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleProductChange = (e) => {
-        const selectedId = e.target.value;
-        const productObject = products.find(prod => prod.productId === selectedId);
-        setSelectedProduct(productObject);
-        setFormData(prev => ({
-            ...prev,
-            product: productObject ? productObject.productId : '',
-        }));
-        handleImageChange(productObject);
-    };
-
-    const handleImageChange = (product) => {
-        if (product && product.productImage) {
-            setPreview(product.productImage);
-        } else {
-            setPreview(null);
-        }
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setIsSubmitting(true);
-
-        try {
-            if (props.auction?.id) {
-                await dispatch(modifyAuction(finalData));
-                console.log("Subasta modificada exitosamente:", finalData);
-                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            } else {
-                await dispatch(addAuction(finalData));
-                console.log("Subasta agregada exitosamente:", finalData);
-                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            }
-
-            setTimeout(() => {
-                // router.push('/Product');
-            }, 1500);
-
-        } catch (error) {
-            console.error("Error al guardar la subasta:", error);
-            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-
-    const executeSubmit = async (event) => {
-        if (event) {
-            event.preventDefault();
-        }
-        setIsSubmitting(true);
-
-        let base64Image = '';
-        try {
-
-            const finalData = {
-                ...formData
-            };
-
-            if (props.auction?.id) {
-                await dispatch(modifyAuction(finalData));
-                console.log("Subasta modificada exitosamente:", finalData);
-                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            } else {
-                await dispatch(addAuction(finalData));
-                console.log("Subasta agregada exitosamente:", finalData);
-                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            }
-
-            setTimeout(() => {
-                // router.push('/Product');
-            }, 1500);
-
-        } catch (error) {
-            console.error("Error al guardar la subasta:", error);
-            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-
-    const handleConfirmSubmit = async () => {
-        setShowModal(false);
-        await executeSubmit();
-    };
 
     if (loadingAuction) {
         return (
@@ -193,11 +30,8 @@ export default function AuctionBid(props) {
     return (
 
         <div className="items-center justify-center h-screen w-full">
-
-
-
-            <section class="py-8 bg-white md:py-16 antialiased">
-                <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
+            <section className="py-8 bg-white md:py-16 antialiased">
+                <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
 
                     <div className="place-content-end">
                         <Link href={`/AuctionClient`} className="pt-3 lg:inline-flex mt-auto mb-6">
@@ -206,17 +40,17 @@ export default function AuctionBid(props) {
                             </svg>
                         </Link>
                     </div>
-                    <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
+                    <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
 
 
 
-                        <div class="shrink-0 max-w-md lg:max-w-lg mx-auto">
+                        <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
                             <img className=" w-full " src={props.auction?.image} />
                         </div>
 
-                        <div class="mt-6 sm:mt-8 lg:mt-0">
+                        <div className="mt-6 sm:mt-8 lg:mt-0">
                             <h1
-                                class="text-xl font-semibold text-gray-900 sm:text-2xl mb-4"
+                                className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4"
                             >
                                 {props.auction?.name}
                             </h1>
@@ -228,13 +62,13 @@ export default function AuctionBid(props) {
                             </div>
 
                             <div>
-                                <p class="mb-6 text-gray-500 ">
+                                <p className="mb-6 text-gray-500 ">
                                     {props.auction?.description}
                                 </p>
                             </div>
 
                             <div>
-                                <p class="mb-6 text-gray-500 ">
+                                <p className="mb-6 text-gray-500 ">
                                     {props.auction?.conditions}
                                 </p>
                             </div>
@@ -257,29 +91,21 @@ export default function AuctionBid(props) {
 
 
 
-                            <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-                                <a
-                                    href="#"
-                                    title=""
-                                    class="text-white mt-4 sm:mt-0 bg-brand hover:bg-brandLight focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center"
-                                    role="button"
-                                >
+                            <div className="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
 
+                                <button onClick={() => setShowManual(true)}
+                                    className="text-white mt-4 sm:mt-0 bg-brand hover:bg-brandLight focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center">
                                     Puja Manual
-                                </a>
+                                </button>
 
-                                <a
-                                    href="#"
-                                    title=""
-                                    class="text-white mt-4 sm:mt-0 bg-brand hover:bg-brandLight focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center"
-                                    role="button"
-                                >
-
+                                <button onClick={() => setShowAuto(true)}
+                                    className="text-white mt-4 sm:mt-0 bg-brand hover:bg-brandLight focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none flex items-center justify-center">
                                     Puja Automatica
-                                </a>
+                                </button>
+
                             </div>
 
-                            <hr class="my-6 md:my-8 border-gray-200 " />
+                            <hr className="my-6 md:my-8 border-gray-200 " />
                             <div className="mb-4 flex gap-10">
                                 <label className="text-lg text-gray-900 sm:text-xl">
                                     Fecha de Inicio
@@ -304,7 +130,10 @@ export default function AuctionBid(props) {
 
                         </div>
                     </div>
-                </div >
+                </div>
+
+                {showManual && <BidModal onClose={() => setShowManual(false)} context={"manual"} auctionId={props.id} />}
+                {showAuto && <BidModal onClose={() => setShowAuto(false)} context={"automatic"} auctionId={props.id} />}
             </section >
         </div>
 

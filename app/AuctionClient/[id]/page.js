@@ -18,5 +18,5 @@ export default function Bid() {
         dispatch(getCurrentAuction(id))
     }, []);
 
-    return <AuctionBid auction={currentAuction} />
+    return <AuctionBid auction={currentAuction} id={id} />
 }
