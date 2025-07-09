@@ -12,6 +12,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [showAuctionClientSubmenu, setShowAuctionClientSubmenu] = useState(false);
   const [showRoleSubmenu, setShowRoleSubmenu] = useState(false);
   const [showPaymentSubmenu, setShowPaymentSubmenu] = useState(false);
+  const [showClaimSubmenu, setShowClaimSubmenu] = useState(false);
   const sidebar = useRef(null);
   const router = useRouter();
 
@@ -535,6 +536,84 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
               )}
             </li>
 
+            {/* CLAIMS */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowClaimSubmenu(!showClaimSubmenu);
+                  } else {
+                    router.push("/Claim");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand stroke-brand">
+
+                  <svg className="w-6 h-6 text-brand" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h6m0-6v6m0-6 5.419-3.87A1 1 0 0 1 18 5.942v12.114a1 1 0 0 1-1.581.814L11 15m7 0a3 3 0 0 0 0-6M6 15h3v5H6v-5Z" />
+                  </svg>
+
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Reclamos
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showConfigurationSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showClaimSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Claim"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Listado de Reclamos
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Claim/Create"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Crear Reclamo
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
             {/* PAYMENTS */}
             <li>
               <button
@@ -646,7 +725,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             </button>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 }

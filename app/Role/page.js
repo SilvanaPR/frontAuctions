@@ -84,6 +84,7 @@ export default function Roles() {
     return (
         <section className="bg-gray-50 p-3 sm:p-5">
             <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
+
                 <SearchBar categories={["Todos", "Fecha", "Inicio de Sesion", "Cambio de Contraseña", "Actualización de Perfil"]} />
 
                 <div className="bg-white relative shadow-md sm:rounded-lg overflow-hidden mt-4">
