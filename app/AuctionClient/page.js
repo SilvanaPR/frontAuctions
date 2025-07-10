@@ -20,8 +20,7 @@ export default function ActiveAuctions() {
     const [auctionToDelete, setAuctionToDelete] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchAuctions('active'))
-        console.log(auctions)
+        dispatch(fetchAuctions('Active'))
     }, [dispatch])
 
     const confirmDelete = (auction) => {

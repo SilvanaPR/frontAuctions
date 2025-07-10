@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }) => {
 
     const logout = useCallback(() => {
         deleteCookie("access_token");
-        debugger
         if (keycloak && keycloak.logout) {
             keycloak.logout({
                 redirectUri: window.location.origin,
@@ -84,7 +83,6 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        debugger
         logoutCallback === null && setLogoutCallback(logout);
     }, [logout]);
 

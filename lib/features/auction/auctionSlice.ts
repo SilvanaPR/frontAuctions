@@ -43,7 +43,6 @@ export const fetchAuctions = createAsyncThunk(
         } else {
             request = await apiAuction.get(`/auction?userId=${userId}`);
         }
-        debugger
         return request.data.map((a: any) => {
             const initDateObj = new Date(a.auctionFechaInicio);
             const endDateObj = new Date(a.auctionFechaFin);
@@ -123,7 +122,7 @@ export const createAuction = createAsyncThunk(
             auctionFechaFin: new Date(auction.endDate).toISOString(),
             auctionCondiciones: auction.conditions,
             auctionCantidadProducto: auction.prodQuantity,
-            auctionEstado: "active",
+            auctionEstado: "pending",
             auctionUserId: userId,
             auctionProductId: auction.productId,
         }

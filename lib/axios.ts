@@ -22,7 +22,6 @@ const validateLogout = () => {
             redirectUri: window.location.origin,
           });
         } else {
-          debugger
           const keycloakUrl = process.env.NEXT_PUBLIC_KEYCLOAK_URL;
           const realm = process.env.NEXT_PUBLIC_KEYCLOAK_REALM;
           const redirectUri = encodeURIComponent(window.location.origin);
@@ -46,7 +45,7 @@ function applyAuthInterceptor(instance: any) {
     response => response,
     error => {
       if (error.response && error.response.status === 401) {
-        return validateLogout();
+        validateLogout();
       }
       return Promise.reject(error);
     }

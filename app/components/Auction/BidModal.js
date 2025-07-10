@@ -12,6 +12,16 @@ export default function BidModal({ onClose, context, auctionId }) {
         auctionId: ''
     });
 
+    useEffect(() => {
+        setFormData({
+            amount: '',
+            amountMax: '',
+            increment: '',
+            bidTime: '',
+            auctionId: auctionId
+        });
+    }, [auctionId]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
