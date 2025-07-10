@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
+import { getAuthData } from '@/lib/utils/authHelpers';
 import { apiAuction } from '@/lib/axios';
 import { getAuthData } from '@/lib/utils/authHelpers';
 
@@ -78,28 +79,39 @@ export const fetchAuctions = createAsyncThunk(
 
 export const fetchAuction = createAsyncThunk(
     'auction/fetchSingleAuction',
-    async (productId: string) => {
-        const { data } = await apiAuction.get(`/auctioneer/product/${productId}?userId=7671574c-6fb8-43b7-98be-897a98c487a0`);
-        return {
-            id: data.productId,
-            name: data.productName,
-            category: data.categoryId,
-            price: data.productPrice,
-            description: data.productDescription,
-            image: data.productImage,
-            stock: data.productStock,
-            availability: data.productAvilability,
-            user: data.productUserId,
-        };
+    async (
+        { auctionId }: { auctionId: string },
+        { rejectWithValue }
+    ) => {
+        try {
+            const { userId } = getAuthData();
+            const { data } = await apiAuction.get(
+                `/auction/id//auctioneer/product/${auctionId}`
+            );
+
+            return {
+                id: data.productId,
+                name: data.productName,
+                category: data.categoryId,
+                price: data.productPrice,
+                description: data.productDescription,
+                image: data.productImage,
+                stock: data.productStock,
+                availability: data.productAvilability,
+                user: data.productUserId,
+            };
+        } catch (error) {
+            return rejectWithValue(err.message);
+        }
     }
 );
 
 export const createAuction = createAsyncThunk(
-  'auction/createAuction',
-  async (auction: Auction) => {
-    const { data } = await apiAuction.post(`/auctioneer/product/Add-Product/?userId=7671574c-6fb8-43b7-98be-897a98c487a0/${auction.productId}`, auction);
-    return data;
-  }
+    'auction/createAuction',
+    async (auction: Auction) => {
+        const { data } = await apiAuction.post(`/auctioneer/product/Add-Product/?userId=7671574c-6fb8-43b7-98be-897a98c487a0/${auction.productId}`, auction);
+        return data;
+    }
 );
 
 

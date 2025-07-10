@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiProduct } from '@/lib/axios';
-import { getCookie } from "cookies-next";
 import { getAuthData } from '@/lib/utils/authHelpers';
-import { useAuth } from '@/lib/contexts/auth';
 
 
 interface Category {
@@ -121,7 +119,7 @@ export const createProduct = createAsyncThunk(
       const { userId } = getAuthData();
       const { data } = await apiProduct.post(
         `/auctioneer/product/Add-Product/${userId}`,
-        {...product, productUserId: userId}
+        { ...product, productUserId: userId }
       );
       return data;
     } catch (err: any) {
@@ -141,7 +139,7 @@ export const updateProduct = createAsyncThunk(
       const { userId } = getAuthData();
       const { data } = await apiProduct.put(
         `/auctioneer/product/Update-Product/${product.productId}?userId=${userId}`,
-        {...product, productUserId: userId}
+        { ...product, productUserId: userId }
       );
       return data;
     } catch (err: any) {

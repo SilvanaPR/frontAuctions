@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import ConfirmationModal from '../ConfirmationModal';
 import { ToastContainer, toast } from 'react-toastify';
 import { useAuth } from '../../../lib/contexts/auth';
+import ImageReader from '../ruta/ImageReader';
 
 
 export default function ProductView(props) {

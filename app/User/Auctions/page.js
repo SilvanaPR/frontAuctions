@@ -54,7 +54,7 @@ export default function AuctionsHistory() {
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 
                 {(currentAuctions ?? []).map((auction) => (
-                    <AuctionCard key={auction.id} auction={auction} paymentButton={true} onDeleteClick={() => confirmDelete(auction)} />
+                    <AuctionCard key={auction.id} auction={auction} context={"payment"} onDeleteClick={() => confirmDelete(auction)} />
                 ))}
                 <div className="mt-8 flex justify-center gap-2">
                     {Array.from({ length: totalPages }, (_, i) => (
