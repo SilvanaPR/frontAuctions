@@ -15,6 +15,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [showPaymentSubmenu, setShowPaymentSubmenu] = useState(false);
   const [showClaimSubmenu, setShowClaimSubmenu] = useState(false);
   const [showPriceSubmenu, setShowPriceSubmenu] = useState(false);
+  const [showReportSubmenu, setShowReportSubmenu] = useState(false);
   const sidebar = useRef(null);
   const router = useRouter();
   const { logout } = useAuth();
@@ -756,6 +757,67 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             }ml-3 whitespace-nowrap `}
                         >
                           Reclamar
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+            {/* REPORTS */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowReportSubmenu(!showReportSubmenu);
+                  } else {
+                    router.push("/Report");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand stroke-brand">
+
+                  <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
+                  </svg>
+
+
+
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Reportes
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showPriceSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showReportSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Report"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Subastas
                         </span>
                       </span>
                     </Link>
