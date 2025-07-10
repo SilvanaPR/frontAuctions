@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
 export default function BidModal({ onClose, context, auctionId }) {
@@ -59,8 +59,9 @@ export default function BidModal({ onClose, context, auctionId }) {
                 <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
 
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center mb-8">
-                    Puja Manual
+                    Puja {context === "manual" ? "Manual" : context === "automatic" ? "Automática" : ""}
                 </h1>
+
                 <form className="space-y-4" onSubmit={(e) => { handleSubmit(e) }}>
 
 

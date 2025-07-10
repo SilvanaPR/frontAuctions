@@ -1,10 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import ClaimModal from "../components/Claim/ClaimModal";
 import ConfirmationModal from "../components/ConfirmationModal";
+import { fetchAuctions } from "../../lib/features/auction/auctionSlice";
+import { useSelector, useDispatch } from 'react-redux';
+import Link from "next/link";
+
 
 export default function Price() {
+    const dispatch = useDispatch()
     const [currentPage, setCurrentPage] = useState(1);
     const rolesPerPage = 8;
     const [showList, setShowList] = useState(false);
@@ -12,32 +17,15 @@ export default function Price() {
     const [showClaim, setShowClaim] = useState(false);
     const [pendingSubmitData, setPendingSubmitData] = useState(null);
     const [selectedCalim, setSelectedClaim] = useState(null);
+    const auctions = useSelector((state) => state.auction.auctions);
     const [modalContext, setModalContext] = useState(null);
 
+    useEffect(() => {
+        dispatch(fetchAuctions('Active'))
 
-    const claimList = [
-        {
-            id: 1,
-            reason: "Razon 1",
-            description: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            evidence: "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg",
-            state: "Pendiente"
-        },
-        {
-            id: 2,
-            reason: "Razon 2",
-            description: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            evidence: "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg",
-            state: "Pendiente"
-        },
-        {
-            id: 3,
-            reason: "Razon 3",
-            description: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            evidence: "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg",
-            state: "Pendiente"
-        }
-    ];
+        console.log(auctions)
+    }, [dispatch])
+
 
 
     const openClaimModal = (claim, context) => {
@@ -48,7 +36,7 @@ export default function Price() {
 
 
 
-    const totalPages = Math.ceil(claimList.length / rolesPerPage);
+    const totalPages = Math.ceil(auctions.length / rolesPerPage);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -97,52 +85,54 @@ export default function Price() {
                         <table className="w-full text-sm text-left text-gray-500">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
                                 <tr>
-                                    <th scope="col" className="px-4 py-3 text-center">Evidencia</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Imagen</th>
                                     <th scope="col" className="px-4 py-3 text-center">Subasta</th>
-                                    <th scope="col" className="px-4 py-3 text-center">Poducto</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Monto</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {claimList.map((c) => (
-                                    <tr key={c.id} className="border-b">
+                                {auctions.map((auction) => (
+                                    <tr key={auction.id} className="border-b">
                                         <td className="px-4 py-3 font-small text-gray-900 whitespace-nowrap text-center h-20 w-20">
                                             <div className="flex items-center justify-center h-full w-full">
                                                 <img
-                                                    src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg"
+                                                    src={auction.image}
                                                     alt="imac image"
                                                     className="h-full w-full object-contain"
                                                 />
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">
-                                            {c.reason}
+                                            {auction.name}
                                         </td>
-                                        <td className="px-4 py-3 font-small text-gray-900 whitespace-nowrap text-center">
-                                            <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
-                                                {c.state}
-                                            </span>
+                                        <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">
+                                            {auction.amount}
                                         </td>
 
                                         <td className="px-6 py-4 flex justify-center items-center space-x-4">
 
-                                            <button
-                                                onClick={() => openClaimModal(c, "solve")}
-                                                className="text-gray-500 hover:text-gray-900"
+                                            <Link
+                                                href={`/Price/${auction.id}?context=report`}
+                                                className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
                                             >
+
                                                 <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h6m0-6v6m0-6 5.419-3.87A1 1 0 0 1 18 5.942v12.114a1 1 0 0 1-1.581.814L11 15m7 0a3 3 0 0 0 0-6M6 15h3v5H6v-5Z" />
                                                 </svg>
 
-                                            </button>
-                                            <button
-                                                onClick={() => openClaimModal(c, "solve")}
-                                                className="text-gray-500 hover:text-gray-900"
+                                            </Link>
+
+                                            <Link
+                                                href={`/Price/${auction.id}?context=claim`}
+                                                className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
                                             >
+
                                                 <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
                                                 </svg>
 
-                                            </button>
+                                            </Link>
                                         </td>
                                     </tr>
 
