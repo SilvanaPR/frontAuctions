@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { addAuction, modifyAuction } from "../../../lib/features/auction/auctionSlice";
+import { createAuction, modifyAuction } from "../../../lib/features/auction/auctionSlice";
 import { fetchProducts } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { Datepicker } from 'flowbite';
 import ConfirmationModal from "../ConfirmationModal";
 import { ToastContainer, toast } from 'react-toastify';
+import ImageReader from '../ImageReader';
 
 export default function AuctionView(props) {
     const [imageFileBase64, setImageFileBase64] = useState('');
@@ -18,22 +19,23 @@ export default function AuctionView(props) {
     const datepickerRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const auctions = useSelector((state) => state.auction.auctions);
     const products = useSelector((state) => state.product.products);
     const [preview, setPreview] = useState(null);
     const loadingAuction = useSelector((state) => state.auction.loadingAuction);
 
     const [formData, setFormData] = useState({
-        name: '',
+        image: '',
         basePrice: '',
+        resPrice: '',
+        name: '',
         description: '',
-        product: '',
+        minIncrement: '',
         initDate: '',
         endDate: '',
         conditions: '',
-        minIncrement: '',
-        resPrice: '',
-        initHour: '00:00',
-        endHour: '00:00',
+        prodQuantity: '',
+        state: '',
     });
 
     useEffect(() => {
@@ -75,8 +77,8 @@ export default function AuctionView(props) {
             setImageFileBase64(props.auction.image);
             const prod = products.find(p => p.productId === props.auction.product);
             setSelectedProduct(prod || null);
-            if (prod && prod.productImage) {
-                setPreview(prod.productImage);
+            if (props.auction.image) {
+                setPreview(props.auction.image);
             } else {
                 setPreview(null);
             }
@@ -97,46 +99,30 @@ export default function AuctionView(props) {
         setSelectedProduct(productObject);
         setFormData(prev => ({
             ...prev,
-            product: productObject ? productObject.productId : '',
+            productId: selectedId,
         }));
-        handleImageChange(productObject);
     };
 
-    const handleImageChange = (product) => {
-        if (product && product.productImage) {
-            setPreview(product.productImage);
+    const handleImageChange = (file) => {
+        setImageFileRaw(file);
+        if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImageFileBase64(reader.result);
+            setFormData(prev => ({
+            ...prev,
+            image: reader.result
+            }));
+        };
+        reader.readAsDataURL(file);
         } else {
-            setPreview(null);
+        setImageFileBase64('');
+        setFormData(prev => ({
+            ...prev,
+            image: ''
+        }));
         }
     };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setIsSubmitting(true);
-
-        try {
-            if (props.auction?.id) {
-                await dispatch(modifyAuction(finalData));
-                console.log("Subasta modificada exitosamente:", finalData);
-                toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            } else {
-                await dispatch(addAuction(finalData));
-                console.log("Subasta agregada exitosamente:", finalData);
-                toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
-            }
-
-            setTimeout(() => {
-                // router.push('/Product');
-            }, 1500);
-
-        } catch (error) {
-            console.error("Error al guardar la subasta:", error);
-            toast.error('Error al Crear la Subasta', { className: 'text-medium py-4 px-6 rounded-md shadow-lg bg-red-100 text-red-700', position: "bottom-right" });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
 
     const executeSubmit = async (event) => {
         if (event) {
@@ -151,13 +137,13 @@ export default function AuctionView(props) {
                 ...formData
             };
 
+            debugger
+
             if (props.auction?.id) {
                 await dispatch(modifyAuction(finalData));
-                console.log("Subasta modificada exitosamente:", finalData);
                 toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             } else {
-                await dispatch(addAuction(finalData));
-                console.log("Subasta agregada exitosamente:", finalData);
+                await dispatch(createAuction(finalData));
                 toast.success('Subasta Agregada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             }
 
@@ -247,6 +233,19 @@ export default function AuctionView(props) {
                                     placeholder="$10.00"
                                     required
                                     value={formData.minIncrement}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="w-full">
+                                <label htmlFor="minIncrement" className="block mb-2 text-sm font-medium text-gray-900">Cantidad de Productos</label>
+                                <input
+                                    type="number"
+                                    name="prodQuantity"
+                                    id="prodQuantity"
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                                    placeholder="10"
+                                    required
+                                    value={formData.prodQuantity}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -385,18 +384,12 @@ export default function AuctionView(props) {
                                     ))}
                                 </select>
                             </div>
-                            {/* IMAGE */}
-                            {preview && (
-                                <div className="mt-4">
-                                    <p className="text-sm text-gray-700 mb-2">Vista previa:</p>
-                                    <img
-                                        src={preview}
-                                        alt="Vista previa"
-                                        className="h-40 object-contain rounded-md border border-gray-300"
-                                    />
-                                </div>
-                            )}
+                            <div className="sm:col-span-2">
+                                <label htmlFor="auctionImage" className="block mb-2 text-sm font-medium text-gray-900">Cargar Imagen</label>
+                                <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
+                            </div>
                         </div>
+                        
 
                         <button
                             type="submit"

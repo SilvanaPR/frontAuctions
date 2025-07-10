@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { getAuthData } from '@/lib/utils/authHelpers';
 import { apiAuction } from '@/lib/axios';
-import { getAuthData } from '@/lib/utils/authHelpers';
 
 
 interface Auction {
@@ -38,13 +37,14 @@ export const fetchAuctions = createAsyncThunk(
     'auction/fetchAuctions',
     async (state?: string) => {
         const { userId } = getAuthData();
-        let data = {}
+        let request = {}
         if (state) {
-            data = await apiAuction.get(`/auction/state/${state}`).data;
+            request = await apiAuction.get(`/auction/state/${state}`);
         } else {
-            data = await apiAuction.get(`/auction?userId=${userId}`).data;
+            request = await apiAuction.get(`/auction?userId=${userId}`);
         }
-        return data.map((a: any) => {
+        debugger
+        return request.data.map((a: any) => {
             const initDateObj = new Date(a.auctionFechaInicio);
             const endDateObj = new Date(a.auctionFechaFin);
 
@@ -109,7 +109,27 @@ export const fetchAuction = createAsyncThunk(
 export const createAuction = createAsyncThunk(
     'auction/createAuction',
     async (auction: Auction) => {
-        const { data } = await apiAuction.post(`/auctioneer/product/Add-Product/?userId=7671574c-6fb8-43b7-98be-897a98c487a0/${auction.productId}`, auction);
+
+        const { userId } = getAuthData();
+
+        const  auctionToCreate = {
+            auctionImage: auction.image,
+            auctionPriceBase: auction.basePrice,
+            auctionPriceReserva: auction.resPrice,
+            auctionName: auction.name,
+            auctionDescription: auction.description,
+            auctionIncremento: auction.minIncrement,
+            auctionFechaInicio: new Date(auction.initDate).toISOString(),
+            auctionFechaFin: new Date(auction.endDate).toISOString(),
+            auctionCondiciones: auction.conditions,
+            auctionCantidadProducto: auction.prodQuantity,
+            auctionEstado: "active",
+            auctionUserId: userId,
+            auctionProductId: auction.productId,
+        }
+
+
+        const { data } = await apiAuction.post(`/auction/addAuction/${userId}/${auction.productId}`, auctionToCreate);
         return data;
     }
 );
@@ -120,9 +140,6 @@ export const auctionSlice = createSlice({
     name: 'auction',
     initialState,
     reducers: {
-        addAuction: (state, action: PayloadAction<Auction>) => {
-            state.auctions = [...state.auctions, action.payload]
-        },
         deleteAuction: (state, action: PayloadAction<Auction>) => {
             state.auctions = state.auctions.filter(auction => auction.id !== action.payload.id);
         },
@@ -150,11 +167,22 @@ export const auctionSlice = createSlice({
             .addCase(fetchAuctions.rejected, (state, action) => {
                 state.loadingAuctions = false;
                 console.error('Error fetching acutions:', action.error.message);
-            });
+            })
+            .addCase(createAuction.pending, (state) => {
+                state.loadingAuctions = true;
+            })
+            .addCase(createAuction.fulfilled, (state, action) => {
+                state.loadingAuctions = false;
+                state.auctions = [...state.auctions, action.payload];
+            })
+            .addCase(createAuction.rejected, (state, action) => {
+                state.loadingAuctions = false;
+                console.error('Error creating auction:', action.error.message);
+            })
 
     },
 })
 
-export const { addAuction, deleteAuction, getCurrentAuction, modifyAuction } = auctionSlice.actions
+export const { deleteAuction, getCurrentAuction, modifyAuction } = auctionSlice.actions
 
 export default auctionSlice.reducer

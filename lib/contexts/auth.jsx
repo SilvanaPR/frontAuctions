@@ -2,7 +2,7 @@
 import keycloak from "@/lib/pkg/keycloak";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
-import { apiAuction, apiProduct, apiUser, setLogoutCallback } from "../axios";
+import { apiAuction, apiProduct, apiUser, setLogoutCallback, logoutCallback } from "../axios";
 
 const AuthContext = createContext({
     isAuthenticated: false,
@@ -63,7 +63,8 @@ export const AuthProvider = ({ children }) => {
 
     const logout = useCallback(() => {
         deleteCookie("access_token");
-        if (keycloak && typeof keycloak.logout === "function") {
+        debugger
+        if (keycloak && keycloak.logout) {
             keycloak.logout({
                 redirectUri: window.location.origin,
             });
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }) => {
 
 
     useEffect(() => {
+        logoutCallback === null && setLogoutCallback(logout);
         const existingToken = getCookie("access_token");
         if (!existingToken && !window.location.href.includes("Login")) {
             login();
@@ -80,6 +82,11 @@ export const AuthProvider = ({ children }) => {
             getUserInfo(existingToken);
         }
     }, []);
+
+    useEffect(() => {
+        debugger
+        logoutCallback === null && setLogoutCallback(logout);
+    }, [logout]);
 
     return (
         <AuthContext.Provider
