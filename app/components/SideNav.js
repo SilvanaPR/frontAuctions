@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { useAuth } from "@/lib/contexts/auth";
 
 export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -16,6 +17,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [showPriceSubmenu, setShowPriceSubmenu] = useState(false);
   const sidebar = useRef(null);
   const router = useRouter();
+  const { logout } = useAuth();
 
   useEffect(() => {
     if (sidebarExpanded) {
@@ -787,7 +789,15 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
             </button>
           </div>
         </div>
-      </div >
+        <div className="mt-auto p-4">
+          <button
+            onClick={logout}
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchAuctions, deleteAuction } from "../../lib/features/auction/auctionSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import ConfirmationModal from '../components/ConfirmationModal';
+import { fetchProducts } from "@/lib/features/product/productSlice";
 
 export default function Auction() {
     const auctions = useSelector((state) => state.auction.auctions);
@@ -22,6 +23,8 @@ export default function Auction() {
 
     useEffect(() => {
         dispatch(fetchAuctions())
+        dispatch(fetchProducts());
+
         console.log(auctions)
     }, [dispatch])
 

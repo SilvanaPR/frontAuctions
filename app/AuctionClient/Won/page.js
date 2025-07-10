@@ -20,7 +20,7 @@ export default function WonAuctions() {
 
 
     useEffect(() => {
-        dispatch(fetchAuctions())
+        dispatch(fetchAuctions('completed'))
         console.log(auctions)
     }, [dispatch])
 
