@@ -13,6 +13,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
   const [showRoleSubmenu, setShowRoleSubmenu] = useState(false);
   const [showPaymentSubmenu, setShowPaymentSubmenu] = useState(false);
   const [showClaimSubmenu, setShowClaimSubmenu] = useState(false);
+  const [showPriceSubmenu, setShowPriceSubmenu] = useState(false);
   const sidebar = useRef(null);
   const router = useRouter();
 
@@ -628,7 +629,7 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                 className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
               >
                 <div className="text-brand">
-                  <svg className="w-6 h-6 text-gray-brand dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M6 14h2m3 0h5M3 7v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Z" />
                   </svg>
 
@@ -693,6 +694,67 @@ export default function Sidenav({ sidebarOpen, setSidebarOpen }) {
                             }ml-3 whitespace-nowrap `}
                         >
                           Crear Rol
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+
+
+            {/* PRICES */}
+            <li>
+              <button
+                onClick={() => {
+                  if (!sidebarExpanded) {
+                    setShowPriceSubmenu(!showPriceSubmenu);
+                  } else {
+                    router.push("/Price");
+                    setSidebarOpen(false);
+                  }
+                }}
+                className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 font-light hover:font-semibold"
+              >
+                <div className="text-brand stroke-brand">
+
+                  <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.171 12.906-2.153 6.411 2.672-.89 1.568 2.34 1.825-5.183m5.73-2.678 2.154 6.411-2.673-.89-1.568 2.34-1.825-5.183M9.165 4.3c.58.068 1.153-.17 1.515-.628a1.681 1.681 0 0 1 2.64 0 1.68 1.68 0 0 0 1.515.628 1.681 1.681 0 0 1 1.866 1.866c-.068.58.17 1.154.628 1.516a1.681 1.681 0 0 1 0 2.639 1.682 1.682 0 0 0-.628 1.515 1.681 1.681 0 0 1-1.866 1.866 1.681 1.681 0 0 0-1.516.628 1.681 1.681 0 0 1-2.639 0 1.681 1.681 0 0 0-1.515-.628 1.681 1.681 0 0 1-1.867-1.866 1.681 1.681 0 0 0-.627-1.515 1.681 1.681 0 0 1 0-2.64c.458-.361.696-.935.627-1.515A1.681 1.681 0 0 1 9.165 4.3ZM14 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
+                  </svg>
+
+
+                </div>
+
+                <span className={`${sidebarExpanded ? "lg:hidden opacity-0 ml-0" : "opacity-100 ml-3 block"} ml-3 whitespace-nowrap`}>
+                  Premios
+                </span>
+
+
+                <span className="ml-auto">
+                  {!sidebarExpanded && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={showPriceSubmenu ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"} />
+                    </svg>
+                  )}
+                </span>
+              </button>
+              {showPriceSubmenu && (
+                <ul className="ml-10 mt-1 space-y-1">
+                  <li>
+                    <Link
+                      onClick={() => setSidebarOpen(false)}
+                      name={Link.name}
+                      href="/Price"
+                      className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                    >
+                      <span className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium">
+                        <span
+                          className={`${sidebarExpanded
+                            ? "lg:hidden opacity-0 ml-0"
+                            : "opacity-100 block"
+                            }ml-3 whitespace-nowrap `}
+                        >
+                          Reclamar
                         </span>
                       </span>
                     </Link>

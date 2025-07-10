@@ -1,22 +1,34 @@
 'use client';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import ImageReader from '../ImageReader'
 import ConfirmationModal from '../ConfirmationModal';
 
-export default function ClaimModal({ onClose }) {
+export default function ClaimModal({ onClose, context, claim }) {
     const [imageFileRaw, setImageFileRaw] = useState(null);
     const [imageFileBase64, setImageFileBase64] = useState('');
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    useEffect(() => {
+        if (claim) {
+            setFormData(prev => ({
+                ...prev,
+                reason: claim.reason || '',
+                description: claim.description || '',
+                image: claim.evidence || '',
+            }));
+            setImageFileBase64(claim.evidence || '');
+        }
+    }, [claim]);
 
     const [formData, setFormData] = useState({
-        motive: '',
+        reason: '',
         description: '',
         auctionId: '',
-        image: ''
+        image: '',
+        response: ''
     });
 
     const handleChange = (e) => {
@@ -83,7 +95,6 @@ export default function ClaimModal({ onClose }) {
         }
     };
 
-
     const handleImageChange = (file) => {
         setImageFileRaw(file);
         if (file) {
@@ -112,36 +123,56 @@ export default function ClaimModal({ onClose }) {
                 <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
 
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center mb-8">
-                    Presentar Reclamo
+                    {context === "create"
+                        ? "Presentar Reclamo"
+                        : context === "solve"
+                            ? "Resolver Reclamo"
+                            : "Reclamo"}
                 </h1>
+
+                {context !== "create" && formData.image && (
+                    <div className="flex justify-center mb-4">
+                        <img
+                            src={formData.image}
+                            alt="image"
+                            className="h-40 object-contain rounded-md border border-gray-300"
+                        />
+                    </div>
+                )}
+
+
 
                 <form className="space-y-4" onSubmit={(e) => {
                     e.preventDefault();
                     setShowConfirmation(true);
                 }}>
 
-                    <div className="relative z-0 w-full mb-5 group">
+                    {/* MOTIVE */}
+                    <div className="relative z-0 w-full my-5 group">
                         <input
                             type="text"
-                            name="motive"
-                            id="motive"
+                            name="reason"
+                            id="reason"
                             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
                             placeholder=" "
-                            required
-                            value={formData.motive}
+                            disabled={context !== "create"}
+                            required={context === "create"}
+                            value={formData.reason}
                             onChange={handleChange}
                         />
                         <label htmlFor="last_name" className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Motivo</label>
 
                     </div>
 
+                    {/* DESCRIPTION */}
                     <div className="relative z-0 w-full mb-5 group">
                         <textarea
                             name="description"
                             id="description"
                             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
                             placeholder=" "
-                            required
+                            disabled={context !== "create"}
+                            required={context === "create"}
                             value={formData.description}
                             onChange={handleChange}
                         />
@@ -150,13 +181,34 @@ export default function ClaimModal({ onClose }) {
 
                     </div>
 
+                    {context === "create" && (
+                        <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
+                    )}
 
-                    <ImageReader onImageChange={handleImageChange} imagePreview={imageFileBase64} />
+                    {/* RESPONSE */}
+                    {context === "solve" && (
+                        <div className="relative z-0 w-full mb-5 group">
+                            <textarea
+                                name="response"
+                                id="response"
+                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
+                                placeholder=" "
+                                required
+                                value={formData.response}
+                                onChange={handleChange}
+                            />
 
+                            <label htmlFor="last_name" className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Solucion</label>
 
-                    <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                        Enviar
-                    </button>
+                        </div>
+                    )}
+
+                    {context === "create" || context === "solve" && (
+                        <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Enviar
+                        </button>
+                    )}
+
 
                 </form>
             </div>

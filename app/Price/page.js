@@ -4,7 +4,7 @@ import SearchBar from "../components/SearchBar";
 import ClaimModal from "../components/Claim/ClaimModal";
 import ConfirmationModal from "../components/ConfirmationModal";
 
-export default function Claim() {
+export default function Price() {
     const [currentPage, setCurrentPage] = useState(1);
     const rolesPerPage = 8;
     const [showList, setShowList] = useState(false);
@@ -85,12 +85,6 @@ export default function Claim() {
         <section className="bg-gray-50 p-3 sm:p-5">
             <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
                 <div className="flex gap-4 items-center mb-6">
-                    <button
-                        onClick={() => openClaimModal(null, "create")}
-                        className="text-white bg-brand hover:bg-brandLight focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                    >
-                        Crear Reclamo
-                    </button>
 
                     <div className="flex-grow">
                         <SearchBar categories={["Todos", "Fecha", "Inicio de Sesion", "Cambio de Contraseña", "Actualización de Perfil"]} />
@@ -104,9 +98,8 @@ export default function Claim() {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
                                 <tr>
                                     <th scope="col" className="px-4 py-3 text-center">Evidencia</th>
-                                    <th scope="col" className="px-4 py-3 text-center">Razon</th>
-                                    <th scope="col" className="px-4 py-3 text-center">Descripcion</th>
-                                    <th scope="col" className="px-4 py-3 text-center">Acciones</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Subasta</th>
+                                    <th scope="col" className="px-4 py-3 text-center">Poducto</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,16 +118,19 @@ export default function Claim() {
                                             {c.reason}
                                         </td>
                                         <td className="px-4 py-3 font-small text-gray-900 whitespace-nowrap text-center">
-                                            {c.description}
+                                            <span className="me-2 rounded bg-brand bg-opacity-20 px-4 py-1 text-base font-semibold text-brand">
+                                                {c.state}
+                                            </span>
                                         </td>
 
                                         <td className="px-6 py-4 flex justify-center items-center space-x-4">
+
                                             <button
-                                                onClick={() => openClaimModal(c, "read")}
+                                                onClick={() => openClaimModal(c, "solve")}
                                                 className="text-gray-500 hover:text-gray-900"
                                             >
                                                 <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h6m0-6v6m0-6 5.419-3.87A1 1 0 0 1 18 5.942v12.114a1 1 0 0 1-1.581.814L11 15m7 0a3 3 0 0 0 0-6M6 15h3v5H6v-5Z" />
                                                 </svg>
 
                                             </button>
