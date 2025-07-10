@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { apiUser } from '@/lib/axios';
+import { getAuthData } from '@/lib/utils/authHelpers';
 
 
 interface User {
@@ -17,12 +18,23 @@ interface User {
 
 const initialState: {
     users: User[],
-    currentUser: {},
+    currentUser: User,
     loadingUsers: boolean,
     loadingUser: boolean
 } = {
     users: [],
-    currentUser: {},
+    currentUser: {
+        userId: '',
+        userEmail: '',
+        usersType: '',
+        userPassword: '',
+        userName: '',
+        userPhone: '',
+        userAddress: '',
+        userAvailable: '',
+        userLastName: '',
+        userDelete: null
+    },
     loadingUsers: false,
     loadingUser: false
 }
@@ -52,7 +64,9 @@ export const fetchUsers = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
     'user/fetchUser',
-    async (userId: string) => {
+    async () => {
+        const { userId } = getAuthData();
+
         const { data } = await apiUser.get(`/user/users/${userId}`);
         return {
             userId: data.userId,
@@ -68,6 +82,41 @@ export const fetchUser = createAsyncThunk(
         };
     }
 );
+
+export const saveUser = createAsyncThunk(
+  'user/saveUser',
+  async (userData: User, { getState }) => {
+    const { user } = getState() as { user: typeof initialState };
+    const usersType = user.currentUser.usersType || userData.usersType;
+    const edit = !!user.currentUser.userId;
+    
+    const endpoint = getEndpoint(usersType, edit);
+    const apiMethod = edit ? 'put' : 'post';
+    const { data } = await apiUser[apiMethod](endpoint + (edit ? user.currentUser.userId : ''), user.currentUser);
+
+    return data;
+  }
+);
+
+
+const getEndpoint = (usersType: string, edit: boolean) => {
+    if (usersType === "Subastador") {
+        if (edit) {
+            return `/user/auctioneer/Update-Auctioneer/`;
+        }
+        return `/user/auctioneer/Auctioneer-Registration/`;
+    } else if (usersType === 'Soporte') {
+        if (edit) {
+            return `/user/auctioneer/Update-Support/`;
+        }
+        return `/user/support/Support-Registration/`;
+    } else if (usersType === 'Postor') {
+        if (edit) {
+            return `/user/bidder/Update-Bidder/`;
+        }
+        return `/user/bidder/Bidder-Registration/`;
+    }
+}
 
 
 export const userSlice = createSlice({

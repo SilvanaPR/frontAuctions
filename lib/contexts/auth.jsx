@@ -2,6 +2,7 @@
 import keycloak from "@/lib/pkg/keycloak";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import { apiAuction, apiProduct, apiUser, setLogoutCallback } from "../axios";
 
 const AuthContext = createContext({
     isAuthenticated: false,
@@ -44,12 +45,12 @@ export const AuthProvider = ({ children }) => {
             .init({
                 onLoad: "login-required",
                 pkceMethod: "S256",
-                //checkLoginIframe: false,
             })
             .then(async (authenticated) => {
                 if (authenticated) {
                     setToken(keycloak.token);
                     setCookie("access_token", keycloak.token);
+                    setCookie("userId", keycloak.token);
                     await getUserInfo(keycloak.token);
                 } else {
                     console.warn("User not authenticated");
@@ -62,14 +63,17 @@ export const AuthProvider = ({ children }) => {
 
     const logout = useCallback(() => {
         deleteCookie("access_token");
-        keycloak.logout({
-            redirectUri: window.location.origin,
-        });
+        if (keycloak && typeof keycloak.logout === "function") {
+            keycloak.logout({
+                redirectUri: window.location.origin,
+            });
+        }
     }, []);
+
 
     useEffect(() => {
         const existingToken = getCookie("access_token");
-        if (!existingToken) {
+        if (!existingToken && !window.location.href.includes("Login")) {
             login();
         } else {
             setToken(existingToken);
@@ -84,6 +88,7 @@ export const AuthProvider = ({ children }) => {
                 user,
                 userId: user?.sub,
                 token,
+                login,
                 logout
             }}
         >

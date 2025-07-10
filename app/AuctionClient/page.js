@@ -20,7 +20,7 @@ export default function ActiveAuctions() {
     const [auctionToDelete, setAuctionToDelete] = useState(null);
 
     useEffect(() => {
-        dispatch(fetchAuctions())
+        dispatch(fetchAuctions('active'))
         console.log(auctions)
     }, [dispatch])
 
@@ -53,7 +53,7 @@ export default function ActiveAuctions() {
         <section className="">
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 
-                {(currentAuctions ?? []).map((auction) => (
+                {(currentAuctions ?? [{}]).map((auction) => (
                     <AuctionCard key={auction.id} auction={auction} onDeleteClick={() => confirmDelete(auction)} />
                 ))}
                 <div className="mt-8 flex justify-center gap-2">

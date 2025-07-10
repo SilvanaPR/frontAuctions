@@ -60,7 +60,6 @@ export const fetchProducts = createAsyncThunk(
   async (_: void, { rejectWithValue }) => {
     try {
       const { userId } = getAuthData();
-      debugger
       const { data } = await apiProduct.get(
         `/auctioneer/product/Product-All?userId=${userId}`
       );

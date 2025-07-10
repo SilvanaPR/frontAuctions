@@ -1,6 +1,12 @@
 import axios from 'axios';
 import { getAuthData } from "./utils/authHelpers";
 
+let logoutCallback: (() => void) | null = null;
+
+export function setLogoutCallback(cb: () => void) {
+  logoutCallback = cb;
+}
+
 function applyAuthInterceptor(instance: any) {
   instance.interceptors.request.use((config: any) => {
     const { token } = getAuthData();
@@ -10,6 +16,15 @@ function applyAuthInterceptor(instance: any) {
     }
     return config;
   });
+  instance.interceptors.response.use(
+    response => response,
+    error => {
+      if (error.response && error.response.status === 401 && logoutCallback) {
+        logoutCallback();
+      }
+      return Promise.reject(error);
+    }
+  );
 }
 
 export const apiProduct = axios.create({
@@ -39,3 +54,4 @@ export const apiUser = axios.create({
 });
 applyAuthInterceptor(apiUser);
 
+    

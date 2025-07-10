@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUser } from "../../../lib/features/user/userSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import ConfirmationModal from '../ConfirmationModal';
 import ImageReader from "../ImageReader";
+import { saveUser } from "@/lib/features/user/userSlice";
 
 export default function Configuration(user) {
     
@@ -22,7 +22,11 @@ export default function Configuration(user) {
         phone: '',
         address: '',
         lastName: '',
-        image: ''
+        image: '',
+        dni: '',
+        birthday: '',
+        password: '',
+        specialization: ''
     });
 
 
@@ -35,7 +39,14 @@ export default function Configuration(user) {
                 phone: user.user.userPhone || '',
                 address: user.user.userAddress || '',
                 lastName: user.user.userLastName || '',
-                image: user.user.image || ''
+                image: user.user.image || '',
+                dni: user.user.userDni || '',
+                birthday: user.user.userBirthday || '',
+                password: '', // Password is not editable in this form
+                specialization: user.user.userSpecialization || '',
+                auctioneerDelete: false,
+                bidderDelete: false,
+                supportDelete: false
             });
         }
     }, [user]);
@@ -78,12 +89,78 @@ export default function Configuration(user) {
         setShowModal(true);
     };
 
+    function buildUserPayload(formData, userType, isEdit) {
+      const base = {
+        userEmail: formData.email,
+        userName: formData.name,
+        userLastName: formData.lastName,
+        userPhone: formData.phone,
+        userAddress: formData.address,
+      };
+
+      if (userType === "Subastador") {
+        if (isEdit) {
+          return {
+            ...base,
+            auctioneerDni: formData.dni,
+            auctioneerBirthday: formData.birthday,
+            auctioneerDelete: false,
+          };
+        } else {
+          return {
+            ...base,
+            userPassword: formData.password,
+            auctioneerDni: formData.dni,
+            auctioneerBirthday: formData.birthday,
+          };
+        }
+      } else if (userType === "Postor") {
+        if (isEdit) {
+          return {
+            ...base,
+            bidderDni: formData.dni,
+            bidderBirthday: formData.birthday,
+            bidderDelete: false,
+          };
+        } else {
+          return {
+            ...base,
+            userPassword: formData.password,
+            bidderDni: formData.dni,
+            bidderBirthday: formData.birthday,
+          };
+        }
+      } else if (userType === "Soporte") {
+        if (isEdit) {
+          return {
+            ...base,
+            supportDni: formData.dni,
+            supportSpecialization: formData.specialization,
+            supportDelete: false,
+          };
+        } else {
+          return {
+            ...base,
+            userPassword: formData.password,
+            supportDni: formData.dni,
+            supportSpecialization: formData.specialization,
+          };
+        }
+      }
+      // fallback
+      return base;
+    }
+
     const handleConfirmSave = async () => {
         setShowModal(false);
         try {
             setIsSubmitting(true);
-            const payload = { ...formData };
-            console.log("Payload a enviar ⇢", payload);
+
+            const userType = formData.tipo; // or wherever you store the user type
+            const isEdit = isEditing; // or your own logic
+            const payload = buildUserPayload(formData, userType, isEdit);
+            
+            await dispatch(saveUser(payload)); 
             toast.success("Cambios guardados correctamente", {
                 position: "bottom-right",
                 className:

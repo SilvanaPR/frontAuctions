@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { apiAuction } from '@/lib/axios';
+import { getAuthData } from '@/lib/utils/authHelpers';
 
 
 interface Auction {
@@ -34,8 +35,14 @@ const initialState: {
 
 export const fetchAuctions = createAsyncThunk(
     'auction/fetchAuctions',
-    async () => {
-        const { data } = await apiAuction.get('/auction?userId=7671574c-6fb8-43b7-98be-897a98c487a0');
+    async (state?: string) => {
+        const { userId } = getAuthData();
+        let data = {}
+        if (state) {
+            data = await apiAuction.get(`/auction/state/${state}`).data;
+        } else {
+            data = await apiAuction.get(`/auction?userId=${userId}`).data;
+        }
         return data.map((a: any) => {
             const initDateObj = new Date(a.auctionFechaInicio);
             const endDateObj = new Date(a.auctionFechaFin);
