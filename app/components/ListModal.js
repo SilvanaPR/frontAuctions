@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 
-export default function ListModal({ onClose, list, selectedList, screen, onSubmit }) {
+export default function ListModal({ onClose, list, selectedList, screen, onAssign, onUnassign, selectedRole }) {
     const [formData, setFormData] = useState({
         lists: []
     });
@@ -25,24 +25,18 @@ export default function ListModal({ onClose, list, selectedList, screen, onSubmi
         }
     }, [selectedList]);
 
+    // Helper: get array of assigned permission names
+    const assignedPermissionNames = Array.isArray(selectedList)
+        ? selectedList.map(p => p.permissionName)
+        : [];
+
     const handleCheckboxChange = (e) => {
-        const { value, checked } = e.target;
-        const id = parseInt(value);
-
-        setFormData((prev) => {
-            const updated = checked
-                ? [...prev.lists, id]
-                : prev.lists.filter((itemId) => itemId !== id);
-            return {
-                ...prev,
-                lists: updated,
-            };
-        });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData.lists);
+        const { value , checked } = e.target;
+        if (checked) {
+            onAssign && onAssign(value);
+        } else {
+            onUnassign && onUnassign(value);
+        }
     };
 
     return (
@@ -55,19 +49,19 @@ export default function ListModal({ onClose, list, selectedList, screen, onSubmi
                         {screen ? `Modificar ${screen === 'user' ? 'Usuario' : 'Rol'}` : ''}
                     </h1>
 
-                    <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div className="space-y-4">
                         <div className="relative z-0 w-full my-12 group ">
                             <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                                 <tbody>
                                     {list.map((li) => (
-                                        <tr key={li.id} className="bg-white border-b hover:bg-gray-50">
+                                        <tr key={li.permissionName} className="bg-white border-b hover:bg-gray-50">
                                             <td className="w-4 p-4">
                                                 <input
                                                     id={`checkbox-${li.id}`}
                                                     type="checkbox"
-                                                    value={li.id}
+                                                    value={li.permissionId}
                                                     onChange={handleCheckboxChange}
-                                                    checked={formData.lists.includes(li.id)}
+                                                    checked={assignedPermissionNames.includes(li.permissionName)}
                                                     className="w-4 h-4 text-brand bg-gray-100 border-gray-300 rounded-sm focus:ring-brand focus:ring-2"
                                                 />
                                             </td>
@@ -79,11 +73,7 @@ export default function ListModal({ onClose, list, selectedList, screen, onSubmi
                                 </tbody>
                             </table>
                         </div>
-
-                        <button type="submit" className="w-full text-white bg-brand hover:bg-brandLight font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Guardar
-                        </button>
-                    </form>
+                    </div>
                 </div>
             </div>
             <ToastContainer />

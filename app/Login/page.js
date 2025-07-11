@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import RegisterModal from '../components/User/RegisterModal';
 import ChangePasswordModal from '../components/User/ChangePasswordModal';
 import Link from "next/link";
+import { useDispatch } from 'react-redux';
+import { createBidder } from '@/lib/features/user/userSlice';
 
 export default function Login() {
   const router = useRouter();
@@ -12,6 +14,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showRegister, setShowRegister] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+const dispatch = useDispatch();
+
 
 
   const handleSubmit = (e) => {

@@ -21,11 +21,8 @@ export default function Manage() {
         token: token,
         userId: userId
       }));
-
-    } else {
-      console.warn("Token o userId no disponibles.");
     }
-  }, [dispatch, token, userId]);
+  }, []);
 
   return <ProductView product={currentProduct} />;
 }

@@ -26,6 +26,10 @@ const initialState: {
     roles: any[],
     loadingPermissions: boolean,
     permissions: any[],
+    // Add new state for role-permission assignments
+    rolePermissions: any[],
+    loadingRolePermissions: boolean,
+    errorRolePermissions: string | null,
 } = {
     users: [],
     activityHistory: [],
@@ -47,8 +51,96 @@ const initialState: {
     roles: [],
     loadingPermissions: false,
     permissions: [],
+    // Add new state for role-permission assignments
+    rolePermissions: [],
+    loadingRolePermissions: false,
+    errorRolePermissions: null,
 }
 
+interface Bidder {
+  userEmail: string,
+  userName: string,
+  userLastName: string,
+  userPhone: string,
+  userAddress: string,
+  userPassword: string,
+  bidderDni: string,
+  bidderBirthday: Date
+}
+interface Support {
+  userEmail: string,
+  userName: string,
+  userLastName: string,
+  userPhone: string,
+  userAddress: string,
+  userPassword: string,
+  supportDni: string,
+  supportSpecialization: Date
+}
+interface Auctioneer {
+  userEmail: string,
+  userName: string,
+  userLastName: string,
+  userPhone: string,
+  userAddress: string,
+  userPassword: string,
+  bidderDni: string,
+  bidderBirthday: Date
+}
+
+export const createBidder = createAsyncThunk(
+  'product/createBidder',
+  async (
+    { bidder }: { bidder: Bidder },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiUser.post(
+        `/user/bidder/Bidder-Registration`,
+        { ...bidder}
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const createAuctioneer = createAsyncThunk(
+  'product/createAuctioneer',
+  async (
+    { bidder }: { bidder: Bidder },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiUser.post(
+        `/user/bidder/Bidder-Registration`,
+        { ...bidder}
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const createSupport = createAsyncThunk(
+  'product/createSupport',
+  async (
+    { bidder }: { bidder: Bidder },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await apiUser.post(
+        `/user/bidder/Bidder-Registration`,
+        { ...bidder}
+      );
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 export const fetchUsers = createAsyncThunk(
     'user/fetchUsers',
@@ -89,7 +181,7 @@ export const fetchUser = createAsyncThunk(
 
         let request;
 
-        if (data.usersType === "Subastador") {
+        if (data.usersType === Subastador) {
             request = await apiUser.get(`/user/auctioneer/${userId}`);
             request = request.data;
             data.dni = request.auctioneerDni;
@@ -230,6 +322,37 @@ export const fetchPermissions = createAsyncThunk(
     }
 );
 
+// Fetch all role-permission assignments
+export const fetchRolePermissions = createAsyncThunk(
+    'user/fetchRolePermissions',
+    async () => {
+        const { data } = await apiUser.get('/user/RoleManagement/Roles-Permissions-All');
+        return data;
+    }
+);
+
+// Assign a permission to a role
+export const assignPermissionToRole = createAsyncThunk(
+    'user/assignPermissionToRole',
+    async ({ roleId, permissionId }: { roleId: string, permissionId: string }) => {
+        const { data } = await apiUser.post('/user/RoleManagement/Assign-Permission-Role', {
+            roleId,
+            permissionId
+        });
+        return data;
+    }
+);
+
+// Unassign a permission from a role
+export const unassignPermissionFromRole = createAsyncThunk(
+    'user/unassignPermissionFromRole',
+    async (rolePermissionId: string) => {
+        await apiUser.delete(`/user/RoleManagement/Unassign-Permission-To-Role/${rolePermissionId}`);
+        return rolePermissionId;
+    }
+);
+
+
 
 export const userSlice = createSlice({
     name: 'user',
@@ -286,9 +409,34 @@ export const userSlice = createSlice({
             })
             .addCase(fetchPermissions.rejected, (state) => {
                 state.loadingPermissions = false;
+            })
+            // Role-permission assignments
+            .addCase(fetchRolePermissions.pending, (state) => {
+                state.loadingRolePermissions = true;
+                state.errorRolePermissions = null;
+            })
+            .addCase(fetchRolePermissions.fulfilled, (state, action) => {
+                state.loadingRolePermissions = false;
+                state.rolePermissions = action.payload;
+            })
+            .addCase(fetchRolePermissions.rejected, (state, action) => {
+                state.loadingRolePermissions = false;
+                state.errorRolePermissions = action.error.message;
+            })
+            .addCase(assignPermissionToRole.fulfilled, (state, action) => {
+                // Optionally, push the new assignment to state.rolePermissions
+                state.rolePermissions.push(action.payload);
+            })
+            .addCase(unassignPermissionFromRole.fulfilled, (state, action) => {
+                // Remove the assignment from state.rolePermissions
+                state.rolePermissions = state.rolePermissions.filter(
+                    (rp: any) => rp.id !== action.payload
+                );
             });
     },
 })
+
+
 
 
 export default userSlice.reducer

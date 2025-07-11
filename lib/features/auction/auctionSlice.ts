@@ -73,6 +73,15 @@ export const bidAuctionAutomatic = createAsyncThunk(
         return data;
 })
 
+export const fetchBidAuctions = createAsyncThunk(
+    'auction/fetchBidAuctions',
+    async (state: string) => {
+        const { userId } = getAuthData();
+        const { data } = await apiBid.get(`/bid/Get-Bid-Filtered?userId=${userId}&status=${state}`);
+        return Array.isArray(data) ? data : [];
+    }
+)
+
 export const fetchAuctions = createAsyncThunk(
     'auction/fetchAuctions',
     async (state?: string) => {
@@ -259,6 +268,9 @@ export const auctionSlice = createSlice({
             })
             .addCase(fetchAuction.fulfilled, (state, action) => {
                 state.currentAuction = action.payload;
+            })
+            .addCase(fetchBidAuctions.fulfilled, (state, action) => {
+                state.auctions = action.payload;
             })
     },
 })

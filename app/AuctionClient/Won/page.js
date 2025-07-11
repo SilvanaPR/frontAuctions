@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import AuctionCard from "../../components/Auction/AuctionCard";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAuctions } from "../../../lib/features/auction/auctionSlice";
+import { fetchAuctions, fetchBidAuctions } from "../../../lib/features/auction/auctionSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import ConfirmationModal from '../../components/ConfirmationModal';
 
@@ -20,8 +20,8 @@ export default function WonAuctions() {
 
 
     useEffect(() => {
-        dispatch(fetchAuctions('completed'))
-    }, [dispatch])
+        dispatch(fetchBidAuctions('Ganadora'))
+    }, [])
 
     return (
         <section className="">
