@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-export default function BidReport() {
+export default function AuctionReport() {
     const [currentPage, setCurrentPage] = useState(1);
     const elementsPerPage = 8;
     const indexOfLastElement = currentPage * elementsPerPage;
@@ -10,12 +10,11 @@ export default function BidReport() {
 
     const elementList = [
         {
-            "userEmail": "yenireedefreitas@gmail.com",
+            "userEmail": "bidder.prueba@gmail.com",
             "auctionName": "La prueba",
-            "paymentAmount": 100,
             "dateTime": "2025-07-11T03:30:00Z",
-            "paymentName": "Tarjeta de Credito",
-            "paymentStatus": "Procesado"
+            "bidAmount": 130,
+            "bidStatus": "Desactivada"
         }
     ];
 
@@ -41,7 +40,6 @@ export default function BidReport() {
                                     <th scope="col" className="px-4 py-3">Fecha</th>
                                     <th scope="col" className="px-4 py-3">Subasta</th>
                                     <th scope="col" className="px-4 py-3">Monto</th>
-                                    <th scope="col" className="px-4 py-3">Tipo de Pago</th>
                                     <th scope="col" className="px-4 py-3">Status</th>
                                 </tr>
                             </thead>
@@ -61,9 +59,8 @@ export default function BidReport() {
                                         </td>
 
                                         <td className="px-4 py-3">{el.auctionName}</td>
-                                        <td className="px-4 py-3">{el.paymentAmount}</td>
-                                        <td className="px-4 py-3">{el.paymentName}</td>
-                                        <td className="px-4 py-3">{el.paymentStatus}</td>
+                                        <td className="px-4 py-3">{el.bidAmount}</td>
+                                        <td className="px-4 py-3">{el.bidStatus}</td>
 
                                     </tr>
                                 ))}
