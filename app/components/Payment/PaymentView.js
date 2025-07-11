@@ -12,7 +12,7 @@ export default function ProductView(props) {
 
   useEffect(() => {
     dispatch(fetchCategories());
-  }, [dispatch]);
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -39,8 +39,6 @@ export default function ProductView(props) {
     setIsSubmitting(true);
 
     try {
-      console.log(formData);
-      //await dispatch(createProduct(formData));
       toast.success('Tarjeta Creada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
 
 

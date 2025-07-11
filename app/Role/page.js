@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import ListModal from "../components/ListModal";
 import ConfirmationModal from "../components/ConfirmationModal";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRoles, fetchPermissions } from "../../lib/features/user/userSlice";
 
 export default function Roles() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -11,42 +13,16 @@ export default function Roles() {
     const [showConfirm, setShowConfirm] = useState(false);
     const [selectedPermissions, setSelectedPermissions] = useState([]);
     const [pendingSubmitData, setPendingSubmitData] = useState(null);
+    const dispatch = useDispatch();
 
-    const rolesList = [
-        {
-            id: 1,
-            rol: "Rol 1",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 3, name: "Permiso 3" }
-            ]
-        },
-        {
-            id: 2,
-            rol: "Rol 2",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 2, name: "Permiso 2" },
-                { id: 3, name: "Permiso 3" }
-            ]
-        },
-        {
-            id: 3,
-            rol: "Rol 3",
-            permissions: [
-                { id: 1, name: "Permiso 1" },
-                { id: 2, name: "Permiso 2" },
-                { id: 3, name: "Permiso 3" }
-            ]
-        }
-    ];
+    const rolesList = useSelector((state) => state.user.roles);
 
-    const allPermissions = [
-        { id: 1, name: "Permiso 1" },
-        { id: 2, name: "Permiso 2" },
-        { id: 3, name: "Permiso 3" },
-        { id: 4, name: "Permiso 4" },
-    ];
+    useEffect(() => {
+        dispatch(fetchRoles());
+        dispatch(fetchPermissions());
+    }, []);
+
+    const allPermissions = useSelector((state) => state.user.permissions);
 
     const totalPages = Math.ceil(rolesList.length / rolesPerPage);
 
@@ -99,7 +75,7 @@ export default function Roles() {
                             <tbody>
                                 {rolesList.map((r) => (
                                     <tr key={r.id} className="border-b">
-                                        <th className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">{r.rol}</th>
+                                        <th className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap text-center">{r.roleName}</th>
                                         <td className="px-6 py-4 flex justify-center items-center space-x-4">
                                             <button
                                                 onClick={() => openListModal(r.permissions)}

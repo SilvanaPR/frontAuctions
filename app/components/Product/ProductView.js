@@ -24,7 +24,7 @@ export default function ProductView(props) {
 
   useEffect(() => {
     dispatch(fetchCategories());
-  }, [dispatch]);
+  }, []);
 
 
   const [formData, setFormData] = useState({

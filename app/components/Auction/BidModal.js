@@ -1,9 +1,10 @@
 'use client';
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { bidAuction, fetchFilteredBids, bidAuctionAutomatic } from "@/lib/features/auction/auctionSlice";
 
-export default function BidModal({ onClose, context, auctionId }) {
+export default function BidModal({ onClose, context, auctionId, startingValue, increment }) {
     const [formData, setFormData] = useState({
         amount: '',
         amountMax: '',
@@ -12,21 +13,46 @@ export default function BidModal({ onClose, context, auctionId }) {
         auctionId: ''
     });
 
+    const resetTimeout = useRef(null);
+
     useEffect(() => {
         setFormData({
-            amount: '',
+            amount: startingValue,
             amountMax: '',
             increment: '',
             bidTime: '',
             auctionId: auctionId
         });
-    }, [auctionId]);
+    }, [auctionId, startingValue]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        const numericValue = Number(value) || 0;
+
+
+
+            // Clear any previous timeout
+        if (resetTimeout.current) clearTimeout(resetTimeout.current);
+
+        // Set a new timeout to reset after 3 seconds
+        resetTimeout.current = setTimeout(() => {
+            if (numericValue < startingValue && name !== "increment") {
+                toast.error("El monto debe ser mayor al monto inicial");
+
+                    setFormData(prev => ({ ...prev, [name]: startingValue }));
+            } else if (numericValue < startingValue + increment && name === "amountMax") {
+                setFormData(prev => ({ ...prev, amountMax: startingValue + increment }));
+            } else if (numericValue < increment) {
+                setFormData(prev => ({ ...prev, increment: increment }));
+
+            }
+
+        }, 2000);
+
+
         setFormData(prev => ({
             ...prev,
-            [name]: value,
+            [name]: numericValue,
         }));
     };
 
@@ -39,18 +65,44 @@ export default function BidModal({ onClose, context, auctionId }) {
             auctionId: auctionId,
         };
 
-        console.log(updatedFormData);
-
-        if (!updatedFormData.amountMax) {
-            // manual
-        } else {
-            // auto
-        }
-
+        handleBid(updatedFormData)
 
         onClose();
     };
 
+    const dispatch = useDispatch();
+
+    const handleBid = async (bid) => {
+        if (context === "Manual") {
+            try {
+                const resultAction = await dispatch(bidAuction(bid));
+
+                if (bidAuction.fulfilled.match(resultAction)) {
+                    dispatch(fetchFilteredBids(auctionId));
+                } else {
+                    window.location.reload();
+                }
+            } catch (err) {
+                debugger
+                window.location.reload();
+
+            }
+        } else {
+            try {
+                const resultAction = await dispatch(bidAuctionAutomatic(bid));
+                if (bidAuctionAutomatic.fulfilled.match(resultAction)) {
+                    dispatch(fetchFilteredBids(auctionId));
+                } else {
+                    window.location.reload();
+                }
+            } catch (err) {
+                window.location.reload();
+
+            }
+        }
+
+        
+    };
 
 
     return (
@@ -59,7 +111,7 @@ export default function BidModal({ onClose, context, auctionId }) {
                 <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
 
                 <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center mb-8">
-                    Puja {context === "manual" ? "Manual" : context === "automatic" ? "Automática" : ""}
+                    Puja {context}
                 </h1>
 
                 <form className="space-y-4" onSubmit={(e) => { handleSubmit(e) }}>
@@ -67,7 +119,7 @@ export default function BidModal({ onClose, context, auctionId }) {
 
                     <div className="relative z-0 w-full mb-5 group">
                         <input
-                            type="number"
+                            type="text"
                             name="amount"
                             id="amount"
                             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
@@ -83,11 +135,11 @@ export default function BidModal({ onClose, context, auctionId }) {
 
 
                     {/* AUTOMATIC */}
-                    {context === "automatic" && (
+                    {context !== "Manual" && (
                         <>
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
-                                    type="number"
+                                    type="text"
                                     name="amountMax"
                                     id="amountMax"
                                     className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"
@@ -101,7 +153,7 @@ export default function BidModal({ onClose, context, auctionId }) {
 
                             <div className="relative z-0 w-full mb-5 group">
                                 <input
-                                    type="number"
+                                    type="text"
                                     name="increment"
                                     id="increment"
                                     className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-brand peer"

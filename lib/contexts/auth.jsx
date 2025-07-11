@@ -2,7 +2,7 @@
 import keycloak from "@/lib/pkg/keycloak";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
-import { apiAuction, apiProduct, apiUser, setLogoutCallback, logoutCallback } from "../axios";
+import { apiAuction, apiProduct, apiUser, setLogoutCallback, getLogoutCallback } from "../axios";
 
 const AuthContext = createContext({
     isAuthenticated: false,
@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setAuth] = useState(false);
     const [token, setToken] = useState(null);
     const isRun = useRef(false);
+
 
     const getUserInfo = async (token) => {
         try {
@@ -63,28 +64,24 @@ export const AuthProvider = ({ children }) => {
 
     const logout = useCallback(() => {
         deleteCookie("access_token");
-        if (keycloak && keycloak.logout) {
+        if (keycloak && typeof keycloak.logout === "function") {
             keycloak.logout({
                 redirectUri: window.location.origin,
             });
         }
     }, []);
 
-
     useEffect(() => {
-        logoutCallback === null && setLogoutCallback(logout);
+        const lCb = getLogoutCallback();
+        lCb === null && setLogoutCallback(logout);
         const existingToken = getCookie("access_token");
-        if (!existingToken && !window.location.href.includes("Login")) {
+        if (!existingToken) {
             login();
         } else {
             setToken(existingToken);
             getUserInfo(existingToken);
         }
     }, []);
-
-    useEffect(() => {
-        logoutCallback === null && setLogoutCallback(logout);
-    }, [logout]);
 
     return (
         <AuthContext.Provider

@@ -19,10 +19,16 @@ interface User {
 const initialState: {
     users: User[],
     currentUser: User,
+    activityHistory: any[],
     loadingUsers: boolean,
-    loadingUser: boolean
+    loadingUser: boolean,
+    loadingRoles: boolean,
+    roles: any[],
+    loadingPermissions: boolean,
+    permissions: any[],
 } = {
     users: [],
+    activityHistory: [],
     currentUser: {
         userId: '',
         userEmail: '',
@@ -36,7 +42,11 @@ const initialState: {
         userDelete: null
     },
     loadingUsers: false,
-    loadingUser: false
+    loadingUser: false,
+    loadingRoles: false,
+    roles: [],
+    loadingPermissions: false,
+    permissions: [],
 }
 
 
@@ -61,6 +71,14 @@ export const fetchUsers = createAsyncThunk(
     }
 );
 
+export const fetchActivityHistory = createAsyncThunk(
+    'user/fetchActivityHistory',
+    async () => {
+        const { userId } = getAuthData();
+        const { data } = await apiUser.get(`/user/activity-history/UserId/${userId}?`);
+        return data;
+})
+
 
 export const fetchUser = createAsyncThunk(
     'user/fetchUser',
@@ -68,20 +86,86 @@ export const fetchUser = createAsyncThunk(
         const { userId } = getAuthData();
 
         const { data } = await apiUser.get(`/user/users/${userId}`);
+
+        let request;
+
+        if (data.usersType === "Subastador") {
+            request = await apiUser.get(`/user/auctioneer/${userId}`);
+            request = request.data;
+            data.dni = request.auctioneerDni;
+
+        } else if (data.usersType === "Postor") {
+            request = await apiUser.get(`/user/bidder/${userId}`);
+            request = request.data;
+            data.dni = request.bidderDni;
+
+        } else {
+            request = await apiUser.get(`/user/support/${userId}`);
+            request = request.data;
+            data.dni = request.supportDni;
+
+        }
+
+        const parsedUser = parseKeysByType(data, request);
+
         return {
-            userId: data.userId,
-            userEmail: data.userEmail,
-            usersType: data.usersType,
-            userPassword: data.userPassword,
-            userName: data.userName,
-            userPhone: data.userPhone,
-            userAddress: data.userAddress,
-            userAvailable: data.userAvailable,
-            userLastName: data.userLastName,
-            userDelete: data.userDelete
+            userId: parsedUser.userId,
+            userEmail: parsedUser.userEmail,
+            usersType: parsedUser.usersType,
+            userName: parsedUser.userName,
+            userPhone: parsedUser.userPhone,
+            userAddress: parsedUser.userAddress,
+            userAvailable: parsedUser.userAvailable,
+            userLastName: parsedUser.userLastName,
+            userDelete: parsedUser.userDelete,
+            dni: parsedUser.dni,
         };
     }
 );
+
+const parseKeysByType = (userData: User, typeData: any) => {
+    if (userData.usersType === "Subastador") {
+        return {
+            ...userData,
+            auctioneerDni: userData.dni,
+            birthday: typeData.auctioneerBirthday,
+
+        }
+    } else if (userData.usersType === "Postor") {
+        return {
+            ...userData,
+            bidderDni: userData.dni,
+            birthday: typeData.auctioneerBirthday,
+        }
+    } else {
+        return {
+            ...userData,
+            supportDni: userData.dni,
+            birthday: typeData.supportBirthday,
+        };
+    }
+}
+
+const customFieldsForCreate = (userData: any) => {
+    if (userData.usersType === "Subastador") {
+        return {
+            ...userData,
+            supportBirthday: userData.birthday,
+            supportDni: userData.dni,
+        }
+    } else if (userData.usersType === "Postor") {
+        return {
+            ...userData,
+            bidderDni: userData.dni,
+            birthday: userData.birthday,
+        }
+    } else {
+        return {
+            ...userData,
+            supportDni: userData.dni,
+        }
+    }
+}
 
 export const saveUser = createAsyncThunk(
   'user/saveUser',
@@ -91,8 +175,20 @@ export const saveUser = createAsyncThunk(
     const edit = !!user.currentUser.userId;
     
     const endpoint = getEndpoint(usersType, edit);
+
+    const userToCreate = customFieldsForCreate({
+        ...userData,
+        userId: userData.userId,
+        userEmail: userData.userEmail,
+        usersType: userData.usersType,
+        userPassword: userData.userPassword,
+        userName: userData.userName,
+    })
+
+
+
     const apiMethod = edit ? 'put' : 'post';
-    const { data } = await apiUser[apiMethod](endpoint + (edit ? user.currentUser.userId : ''), user.currentUser);
+    const { data } = await apiUser[apiMethod](endpoint + (edit ? user.currentUser.userId : ''), userToCreate);
 
     return data;
   }
@@ -117,6 +213,22 @@ const getEndpoint = (usersType: string, edit: boolean) => {
         return `/user/bidder/Bidder-Registration/`;
     }
 }
+
+export const fetchRoles = createAsyncThunk(
+    'user/fetchRoles',
+    async () => {
+        const { data } = await apiUser.get(`/user/RoleManagement/Roles-All`);
+        return data;
+    }
+)
+
+export const fetchPermissions = createAsyncThunk(
+    'user/fetchPermissions',
+    async () => {
+        const { data } = await apiUser.get(`/user/RoleManagement/Permission-All`);
+        return data;
+    }
+);
 
 
 export const userSlice = createSlice({
@@ -150,6 +262,30 @@ export const userSlice = createSlice({
             .addCase(fetchUser.rejected, (state, action) => {
                 state.loadingUser = false;
                 console.error('Error fetching users:', action.error.message);
+            })
+            .addCase(fetchActivityHistory.pending, (state) => {
+                state.loadingActivityHistory = true;
+            })
+            .addCase(fetchActivityHistory.fulfilled, (state, action) => {
+                state.loadingActivityHistory = false;
+                state.activityHistory = action.payload;
+            })
+            .addCase(fetchRoles.pending, (state) => {
+                state.loadingRoles = true;
+            })
+            .addCase(fetchRoles.fulfilled, (state, action) => {
+                state.loadingRoles = false;
+                state.roles = action.payload;
+            })
+            .addCase(fetchPermissions.pending, (state) => {
+                state.loadingPermissions = true;
+            })
+            .addCase(fetchPermissions.fulfilled, (state, action) => {
+                state.loadingPermissions = false;
+                state.permissions = action.payload;
+            })
+            .addCase(fetchPermissions.rejected, (state) => {
+                state.loadingPermissions = false;
             });
     },
 })

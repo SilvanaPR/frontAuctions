@@ -48,6 +48,7 @@ export default function ActiveAuctions() {
         setAuctionToDelete(null);
     };
 
+
     return (
         <section className="">
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -55,7 +56,6 @@ export default function ActiveAuctions() {
                 {(currentAuctions ?? []).map((auction) => (
                     <AuctionCard key={auction.id} auction={auction} context={"bid"} onDeleteClick={() => confirmDelete(auction)} />
                 ))}
-                {console.log(currentAuctions)}
 
                 <div className="mt-8 flex justify-center gap-2">
                     {Array.from({ length: totalPages }, (_, i) => (

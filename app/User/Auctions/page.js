@@ -21,7 +21,6 @@ export default function AuctionsHistory() {
 
     useEffect(() => {
         dispatch(fetchAuctions())
-        console.log(auctions)
     }, [dispatch])
 
     const confirmDelete = (auction) => {

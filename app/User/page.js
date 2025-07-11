@@ -10,7 +10,7 @@ export default function UserConfiguration() {
 
   useEffect(() => {
     dispatch(fetchUser());
-  }, [dispatch]);
+  }, []);
 
   return <Configuration user={user} />;
 }

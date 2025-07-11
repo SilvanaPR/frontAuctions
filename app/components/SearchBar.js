@@ -1,9 +1,10 @@
 "use client";
 import React, { useState } from "react";
 
-export default function SearchBar({ categories }) {
+export default function SearchBar({ categories = [], onSearch }) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("Todos");
+    const [searchValue, setSearchValue] = useState("");
 
     const toggleDropdown = () => {
         setShowDropdown(prev => !prev);
@@ -12,9 +13,13 @@ export default function SearchBar({ categories }) {
     const handleSelectCategory = (category) => {
         setSelectedCategory(category);
         setShowDropdown(false);
+        if (onSearch) onSearch(searchValue, category);
     };
 
-    //const categories = ["Todos", "Nombre", "Categoría", "Precio"];
+    const handleInputChange = (e) => {
+        setSearchValue(e.target.value);
+        if (onSearch) onSearch(e.target.value, selectedCategory);
+    };
 
     return (
         <div className="max-w-lg mx-auto relative">
@@ -60,10 +65,12 @@ export default function SearchBar({ categories }) {
                         id="search-dropdown"
                         className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                         placeholder={`Buscar ${selectedCategory === "Todos" ? "..." : selectedCategory}`}
+                        value={searchValue}
+                        onChange={handleInputChange}
                         required
                     />
                     <button
-                        type="submit"
+                        type="button"
                         className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-brand rounded-e-lg hover:bg-brandLight focus:ring-4 focus:outline-none"
                     >
                         <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">

@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import ConfirmationModal from '../ConfirmationModal';
 import ImageReader from "../ImageReader";
 import { saveUser } from "@/lib/features/user/userSlice";
+import { Datepicker } from "flowbite";
 
 export default function Configuration(user) {
     
@@ -14,6 +15,7 @@ export default function Configuration(user) {
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [imageFileRaw, setImageFileRaw] = useState(false);
+    const datepickerRef = useRef(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -32,6 +34,7 @@ export default function Configuration(user) {
 
     useEffect(() => {
         if (user) {
+            debugger
             setFormData({
                 name: user.user.userName || '',
                 email: user.user.userEmail || '',
@@ -40,7 +43,7 @@ export default function Configuration(user) {
                 address: user.user.userAddress || '',
                 lastName: user.user.userLastName || '',
                 image: user.user.image || '',
-                dni: user.user.userDni || '',
+                dni: user.user.dni || '',
                 birthday: user.user.userBirthday || '',
                 password: '', // Password is not editable in this form
                 specialization: user.user.userSpecialization || '',
@@ -50,6 +53,20 @@ export default function Configuration(user) {
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const birthDayEl = document.getElementById("birthDay");
+            if (birthDayEl) {
+                const datepicker = new Datepicker(birthDayEl);
+                const onChange = (event) => {
+                    setFormData(prev => ({ ...prev, birthDay: event.target.value }));
+                };
+                birthDayEl.addEventListener('changeDate', onChange);
+                return () => birthDayEl.removeEventListener('changeDate', onChange);
+            }
+        }
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -285,6 +302,40 @@ export default function Configuration(user) {
                         />
                     </div>
 
+                    <div className="w-full mb-4">
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">DNI</label>
+                        <input
+                            type="text"
+                            name="dni"
+                            id="dni"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                            required
+                            value={formData.dni}
+                            onChange={handleChange}
+                            disabled={!isEditing}
+                        />
+                    </div>
+                    <div className="w-full">
+                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                            Fecha de Nacimiento
+                            <div className="relative max-w-sm mt-2.5">
+                                <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                    <svg
+                                        className="w-4 h-4 text-gray-500"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                    </svg>
+                                </div>
+                                <input name="birthDay"
+                                    id="birthDay" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" value={formData.birthDay} onChange={handleChange} placeholder="Selecionar Fecha" required={isEditing} />
+
+                            </div>
+                        </label>
+                    </div>
                     {/* ADRESS */}
                     <div className="sm:col-span-2 group mb-4">
                         <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-900">Dirección</label>

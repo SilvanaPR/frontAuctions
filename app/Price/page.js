@@ -22,8 +22,6 @@ export default function Price() {
 
     useEffect(() => {
         dispatch(fetchAuctions('Active'))
-
-        console.log(auctions)
     }, [dispatch])
 
 
@@ -46,7 +44,6 @@ export default function Price() {
 
     const handleConfirmSubmit = () => {
         if (pendingSubmitData) {
-            console.log("Datos confirmados para enviar:", pendingSubmitData);
 
             if (context === "create") {
                 // CREAR RECLAMO

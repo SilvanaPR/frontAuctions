@@ -40,7 +40,7 @@ export default function AuctionView(props) {
 
     useEffect(() => {
         dispatch(fetchProducts());
-    }, [dispatch]);
+    }, []);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -71,17 +71,35 @@ export default function AuctionView(props) {
     }, []);
 
     useEffect(() => {
-        console.log(props.auction)
-        if (props.auction?.id) {
-            setFormData(props.auction);
-            setImageFileBase64(props.auction.image);
-            const prod = products.find(p => p.productId === props.auction.product);
+        if (props.auction?.auctionId) {
+            setFormData({
+                image: props.auction.auctionImage || '',
+                basePrice: props.auction.auctionPriceBase || '',
+                resPrice: props.auction.auctionPriceReserva || '',
+                name: props.auction.auctionName || '',
+                description: props.auction.auctionDescription || '',
+                minIncrement: props.auction.auctionIncremento || '',
+                initDate: props.auction.auctionFechaInicio
+                    ? new Date(props.auction.auctionFechaInicio).toISOString().slice(0, 10)
+                    : '',
+                endDate: props.auction.auctionFechaFin
+                    ? new Date(props.auction.auctionFechaFin).toISOString().slice(0, 10)
+                    : '',
+                initHour: props.auction.auctionFechaInicio
+                    ? new Date(props.auction.auctionFechaInicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+                    : '',
+                endHour: props.auction.auctionFechaFin
+                    ? new Date(props.auction.auctionFechaFin).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+                    : '',
+                conditions: props.auction.auctionCondiciones || '',
+                prodQuantity: props.auction.auctionCantidadProducto || '',
+                productId: props.auction.auctionProductId || '',
+                state: props.auction.auctionEstado || '',
+            });
+            setImageFileBase64(props.auction.auctionImage);
+            const prod = products.find(p => p.productId === props.auction.auctionProductId);
             setSelectedProduct(prod || null);
-            if (props.auction.image) {
-                setPreview(props.auction.image);
-            } else {
-                setPreview(null);
-            }
+            setPreview(props.auction.auctionImage || null);
         }
     }, [props.auction, products]);
 
@@ -134,10 +152,11 @@ export default function AuctionView(props) {
         try {
 
             const finalData = {
+                auctionId: props.auction?.auctionId,
                 ...formData
             };
-
-            if (props.auction?.id) {
+            debugger
+            if (props.auction?.auctionId) {
                 await dispatch(modifyAuction(finalData));
                 toast.success('Subasta Modificada Exitosamente', { position: "bottom-right", className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700', });
             } else {

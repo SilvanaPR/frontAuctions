@@ -24,8 +24,6 @@ export default function Auction() {
     useEffect(() => {
         dispatch(fetchAuctions())
         dispatch(fetchProducts());
-
-        console.log(auctions)
     }, [dispatch])
 
     const confirmDelete = (auction) => {
@@ -35,7 +33,8 @@ export default function Auction() {
 
     const handleConfirmDelete = () => {
         if (auctionToDelete) {
-            dispatch(deleteAuction(auctionToDelete));
+            dispatch(deleteAuction(auctionToDelete.id));
+            console.log(auctionToDelete)
             toast.success('Subasta eliminada correctamente', {
                 position: "bottom-right",
                 className: 'text-medium py-6 px-8 rounded-md shadow-lg bg-green-100 text-green-700',

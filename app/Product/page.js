@@ -30,7 +30,7 @@ export default function Product() {
 
   useEffect(() => {
     dispatch(fetchProducts());
-  }, [dispatch]);
+  }, []);
 
 
 

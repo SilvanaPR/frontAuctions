@@ -24,7 +24,7 @@ export default function PriceView({ auction, context }) {
 
     useEffect(() => {
         dispatch(fetchProducts());
-    }, [dispatch]);
+    }, []);
 
 
 

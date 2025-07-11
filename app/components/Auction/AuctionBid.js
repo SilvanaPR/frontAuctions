@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { addAuction, modifyAuction } from "../../../lib/features/auction/auctionSlice";
+import { addAuction, fetchFilteredBids, modifyAuction } from "../../../lib/features/auction/auctionSlice";
 import { fetchProducts } from "../../../lib/features/product/productSlice";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -15,6 +15,19 @@ export default function AuctionBid(props) {
     const loadingAuction = useSelector((state) => state.auction.loadingAuction);
     const [showManual, setShowManual] = useState(false);
     const [showAuto, setShowAuto] = useState(false);
+    const dispatch = useDispatch();
+    const currentBids = useSelector((state) => state.auction.currentBids);
+    const [currentValue, setCurrentValue] = useState(0);
+
+    useEffect(() => {
+        dispatch(fetchFilteredBids(props.id))
+    }, [])
+
+
+    useEffect(() => {
+        const hBid = currentBids.reduce((max, bid) => bid.amount > max.amount ? bid : max, currentBids[0]);
+        setCurrentValue(hBid?.amount ?? props.auction?.basePrice);
+    }, [currentBids])
 
 
     if (loadingAuction) {
@@ -77,7 +90,7 @@ export default function AuctionBid(props) {
                                 <div className="flex flex-col items-center">
                                     <p className="text-m text-gray-900 sm:text-lg">Precio Base</p>
                                     <p className="text-xl font-extrabold text-gray-900 sm:text-2xl">
-                                        {props.auction?.basePrice}
+                                        {currentValue}
                                     </p>
                                 </div>
 
@@ -132,8 +145,8 @@ export default function AuctionBid(props) {
                     </div>
                 </div>
 
-                {showManual && <BidModal onClose={() => setShowManual(false)} context={"manual"} auctionId={props.id} />}
-                {showAuto && <BidModal onClose={() => setShowAuto(false)} context={"automatic"} auctionId={props.id} />}
+                {showManual && <BidModal onClose={() => setShowManual(false)} context={"Manual"} auctionId={props.id} increment={props.auction?.minIncrement} startingValue={currentValue + props.auction?.minIncrement} />}
+                {showAuto && <BidModal onClose={() => setShowAuto(false)} context={"Automática"} auctionId={props.id} increment={props.auction?.minIncrement} startingValue={currentValue + props.auction?.minIncrement} />}
             </section >
         </div>
 

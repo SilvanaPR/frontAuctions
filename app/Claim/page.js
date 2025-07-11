@@ -58,7 +58,6 @@ export default function Claim() {
 
     const handleConfirmSubmit = () => {
         if (pendingSubmitData) {
-            console.log("Datos confirmados para enviar:", pendingSubmitData);
 
             if (context === "create") {
                 // CREAR RECLAMO

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { getCurrentAuction } from "../../../lib/features/auction/auctionSlice";
+import { fetchAuction } from "../../../lib/features/auction/auctionSlice";
 
 import AuctionView from "../../components/Auction/AuctionView";
 
@@ -13,8 +13,9 @@ export default function Manage({ params }) {
     const currentAuction = useSelector((state) => state.auction.currentAuction)
 
     useEffect(() => {
-        dispatch(getCurrentAuction(id))
+        dispatch(fetchAuction(id))
     }, []);
 
+    console.log(currentAuction)
     return <AuctionView auction={currentAuction} />
 }

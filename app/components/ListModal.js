@@ -72,7 +72,7 @@ export default function ListModal({ onClose, list, selectedList, screen, onSubmi
                                                 />
                                             </td>
                                             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                                {li.name}
+                                                {li.permissionName}
                                             </td>
                                         </tr>
                                     ))}

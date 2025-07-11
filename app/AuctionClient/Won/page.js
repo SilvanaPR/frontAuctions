@@ -21,7 +21,6 @@ export default function WonAuctions() {
 
     useEffect(() => {
         dispatch(fetchAuctions('completed'))
-        console.log(auctions)
     }, [dispatch])
 
     return (

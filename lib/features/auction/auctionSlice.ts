@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { getAuthData } from '@/lib/utils/authHelpers';
-import { apiAuction } from '@/lib/axios';
+import { apiAuction, apiBid } from '@/lib/axios';
 
 
 interface Auction {
@@ -26,12 +26,52 @@ const initialState: {
     auctions: Auction[],
     currentAuction: {},
     loadingAuctions: boolean,
+    currentBids: Bid[],
 } = {
     auctions: [],
     currentAuction: {},
     loadingAuctions: false,
+    currentBids: []
 }
 
+interface Bid {
+    auctionId: string;
+    amount: number;
+    bidTime: string;
+    amountMax?: number;
+    increment?: number;
+}
+
+export const bidAuction = createAsyncThunk(
+    'auction/bidAuction',
+    async (bid: Bid) => {
+        const { userId } = getAuthData();
+        const bidToCreate = {
+            "bidAuctionId": bid.auctionId,
+            "bidUserId": userId,
+            "amount": bid.amount,
+        }
+
+        const { data } = await apiBid.post(`/bid/Add-Bid/${userId}`, bidToCreate);
+        return data;
+})
+
+export const bidAuctionAutomatic = createAsyncThunk(
+    'auction/bidAuctionAutomatic',
+    async (bid: Bid) => {
+        debugger
+        const { userId } = getAuthData();
+        const bidToCreate = {
+            "bidAuctionId": bid.auctionId,
+            "bidUserId": userId,
+            "amount": bid.amount,
+            "amountMax": bid.amountMax,
+            "increment": bid.increment
+        }
+
+        const { data } = await apiBid.post(`/bid/Add-BidAutomatic/${userId}`, bidToCreate);
+        return data;
+})
 
 export const fetchAuctions = createAsyncThunk(
     'auction/fetchAuctions',
@@ -64,7 +104,7 @@ export const fetchAuctions = createAsyncThunk(
                 description: a.auctionDescription,
                 minIncrement: a.auctionIncremento,
                 initDate: formatDate(initDateObj),
-                endDate: a.auctionFechaFin,
+                endDate: formatDate(endDateObj),
                 initHour: formatTime(initDateObj),
                 endHour: formatTime(endDateObj),
                 conditions: a.auctionCondiciones,
@@ -79,25 +119,17 @@ export const fetchAuctions = createAsyncThunk(
 export const fetchAuction = createAsyncThunk(
     'auction/fetchSingleAuction',
     async (
-        { auctionId }: { auctionId: string },
+        auctionId: string,
         { rejectWithValue }
     ) => {
         try {
             const { userId } = getAuthData();
             const { data } = await apiAuction.get(
-                `/auction/id//auctioneer/product/${auctionId}`
+                `/auction/id/${auctionId}`
             );
 
             return {
-                id: data.productId,
-                name: data.productName,
-                category: data.categoryId,
-                price: data.productPrice,
-                description: data.productDescription,
-                image: data.productImage,
-                stock: data.productStock,
-                availability: data.productAvilability,
-                user: data.productUserId,
+               ...data,
             };
         } catch (error) {
             return rejectWithValue(err.message);
@@ -133,25 +165,66 @@ export const createAuction = createAsyncThunk(
     }
 );
 
+export const modifyAuction = createAsyncThunk(
+    'auction/modifyAuction',
+    async (auction: Auction) => {
 
+        const { userId } = getAuthData();
+
+        const  auctionToCreate = {
+            auctionImage: auction.image,
+            auctionPriceBase: auction.basePrice,
+            auctionPriceReserva: auction.resPrice,
+            auctionName: auction.name,
+            auctionDescription: auction.description,
+            auctionIncremento: auction.minIncrement,
+            auctionFechaInicio: combineDateAndTime(auction.initDate, auction.initHour),
+            auctionFechaFin: combineDateAndTime(auction.endDate, auction.endHour),
+            auctionCondiciones: auction.conditions,
+            auctionCantidadProducto: auction.prodQuantity,
+            auctionEstado: "pending",
+            auctionUserId: userId,
+            auctionProductId: auction.productId,
+            auctionId: auction.auctionId
+        }
+
+
+        const { data } = await apiAuction.put(`/auction/${auction.auctionId}?userId=${userId}`, auctionToCreate);
+        return data;
+    }
+);
+
+export const deleteAuction = createAsyncThunk(
+    'auction/deleteAuction',
+    async (auctionId: string) => { 
+        
+        const { userId } = getAuthData();
+        const { data } = await apiAuction.delete(`/auction/${auctionId}?userId=${userId}`);
+        console.log(data)
+        return data;
+    }
+);
+
+export const fetchFilteredBids = createAsyncThunk(
+  'auction/fetchFilteredBids',
+  async (auctionId) => {
+    const { data } = await apiBid.get(`/bid/Get-Bid-Filtered?auctionId=${auctionId}`);
+    // Ensure data is always an array
+    return Array.isArray(data) ? data : [];
+  }
+);
+
+const combineDateAndTime = (date, time) => {
+    if (!date || !time) return '';
+    // Crea un objeto Date en local y lo convierte a ISO string (UTC)
+    const localDate = new Date(`${date}T${time}:00`);
+    return localDate.toISOString(); // Esto da "2025-06-29T14:30:00.000Z"
+};
 
 export const auctionSlice = createSlice({
     name: 'auction',
     initialState,
     reducers: {
-        deleteAuction: (state, action: PayloadAction<Auction>) => {
-            state.auctions = state.auctions.filter(auction => auction.id !== action.payload.id);
-        },
-        getCurrentAuction: (state, action: PayloadAction<number>) => {
-            const cur: number = state.auctions.length + 2
-            state.currentAuction = { id: cur, name: "Reloj de Pulsera Antiguo", basePrice: 150, description: "Elegante reloj de pulsera antiguo de cuerda manual, funcionando perfectamente.", image: "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg", initDate: "2025-05-20T10:00:00-04:00", endDate: "2025-05-27T18:00:00-04:00", conditions: "Se vende tal cual se muestra en las imágenes. No se aceptan devoluciones.", minIncrement: 10, resPrice: 250, state: "activo", initHour: "10:00", endHour: "12:00" }
-        },
-        modifyAuction: (state, action: PayloadAction<Auction>) => {
-            const index = state.auctions.findIndex(auction => auction.id === action.payload.id);
-            if (index !== -1) {
-                state.auctions[index] = action.payload;
-            }
-        }
 
     },
     extraReducers: (builder) => {
@@ -178,10 +251,17 @@ export const auctionSlice = createSlice({
                 state.loadingAuctions = false;
                 console.error('Error creating auction:', action.error.message);
             })
-
+            .addCase(bidAuction.pending, (state) => {
+                state.loadingAuctions = true;
+            })
+            .addCase(fetchFilteredBids.fulfilled, (state, action) => {
+                state.currentBids = action.payload;
+            })
+            .addCase(fetchAuction.fulfilled, (state, action) => {
+                state.currentAuction = action.payload;
+            })
     },
 })
 
-export const { deleteAuction, getCurrentAuction, modifyAuction } = auctionSlice.actions
 
 export default auctionSlice.reducer

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { getCurrentAuction } from "../../../lib/features/auction/auctionSlice";
+import { fetchAuction } from "../../../lib/features/auction/auctionSlice";
 import AuctionBid from "../../components/Auction/AuctionBid";
 import { useParams } from "next/navigation";
 
@@ -15,7 +15,7 @@ export default function Bid() {
     const currentAuction = useSelector((state) => state.auction.currentAuction)
 
     useEffect(() => {
-        dispatch(getCurrentAuction(id))
+        dispatch(fetchAuction(id))
     }, []);
 
     return <AuctionBid auction={currentAuction} id={id} />
