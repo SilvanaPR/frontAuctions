@@ -1,0 +1,389 @@
+[33mcommit fb951a3fe2aa451e82076b3115845a432bd7ae1b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: SilvanaPR <silvanapenarondon@gmail.com>
+Date:   Fri Jul 11 07:12:29 2025 -0400
+
+    Refactor auction-related components and improve state management
+    
+    - Replaced `getCurrentAuction` with `fetchAuction` in multiple components for consistency.
+    - Updated auction deletion logic to use `auctionToDelete.id`.
+    - Removed unnecessary console logs from various components.
+    - Enhanced the `BidModal` to handle bids more effectively, including automatic bidding.
+    - Improved user activity tracking by adding `fetchActivityHistory` and related state management.
+    - Updated user roles and permissions fetching logic.
+    - Cleaned up unused code and ensured better state handling across components.
+
+[33mcommit 3005c281f639f69d8914d3321539fc82ca8c340d[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 16:36:59 2025 -0400
+
+    bids history screen
+
+[33mcommit 3d51e9db6e9ca2c0dd7106934ccbd4f27949e2a8[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 15:37:29 2025 -0400
+
+    claim prices screens
+
+[33mcommit b3ffc4ac0ca1273ab1d67cba3505cfaba6ec6c1c[m
+Merge: ac97c56 62da606
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 10:48:43 2025 -0400
+
+    Merge branch 'main' of https://github.com/SilvanaPR/frontAuctions
+
+[33mcommit ac97c566a1e81dcf5ef29f2fe26e2bb92fb62967[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 10:48:28 2025 -0400
+
+    prices module created
+
+[33mcommit 62da60683a0b3d8710472267bc5ad77309d65484[m
+Author: SilvanaPR <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 10:40:30 2025 -0400
+
+    changes required
+
+[33mcommit aa4553d92bc509356c8488072b87e04064064b04[m
+Author: SilvanaPR <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 07:37:04 2025 -0400
+
+    add auth changes and auction changes
+
+[33mcommit dd3cbe11f0e310e397137353b98a3fa2eb7b0dde[m
+Merge: 3cfeb4a b719aed
+Author: SilvanaPR <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 05:20:17 2025 -0400
+
+    Merge branch 'main' of https://github.com/SilvanaPR/frontAuctions
+
+[33mcommit 3cfeb4a5fabc28b2a5d80e56c95715cbce6f1cb8[m
+Author: SilvanaPR <silvanapenarondon@gmail.com>
+Date:   Thu Jul 10 05:18:56 2025 -0400
+
+    Add auth module
+    
+    Created auth module for enhancing user experience
+
+[33mcommit b719aed130a91274171cae3dcddf959ecadb955d[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Wed Jul 9 05:00:48 2025 -0400
+
+    create claim and claim list screens
+
+[33mcommit 209986d5e71462194d113a75627b8f9a5974f93c[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Tue Jul 8 18:45:56 2025 -0400
+
+    bid modals functional
+
+[33mcommit 33f235eb09c13d0d5cf0ab9a16d60e0c0b70757a[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Tue Jul 8 14:31:34 2025 -0400
+
+    bid screen added
+
+[33mcommit 4d83645113789c11700cb30b857965aef5125599[m
+Author: jean <jean.nieto@jove.com>
+Date:   Tue Jul 8 11:17:55 2025 -0400
+
+    ref: add helpers for auth handling
+
+[33mcommit 28af49a4cae660da3ce7a803bb8bef81e4d144fb[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Tue Jul 8 10:30:59 2025 -0400
+
+    product functional
+
+[33mcommit e1bfb847c769dd3e31994f0b478669cb167cc32d[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Sun Jul 6 23:54:05 2025 -0400
+
+    functional commit
+
+[33mcommit 7013d1f2934238092d4bf6dba929d18ad84acf16[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Sun Jul 6 14:53:51 2025 -0400
+
+    missing confirmations modals implemented
+
+[33mcommit 349d5a1d7bbc9372ddafabd6ac38e76191d46bfb[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Sun Jul 6 14:38:35 2025 -0400
+
+    roles and permission screens implemented
+
+[33mcommit 6abcc3bb4041168261f8ebb9606e5d5590a3c3db[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Sat Jul 5 19:17:01 2025 -0400
+
+    functional commit
+
+[33mcommit f75cfddfe9031e72e628e60115e61c4b949fe539[m
+Author: unknown <silvanapenarondon@gmail.com>
+Date:   Fri Jul 4 00:45:35 2025 -0400
+
+    keycloak login functional
+
+[33mcommit 0743a55bd518dda0c31786b934e24fdfe0a7918f[m
+Author: jean <jean.nieto@jove.com>
+Date:   Sun Jun 29 19:43:56 2025 -0400
+
+    functional commit loading screens and small buggs fixed
+
+[33mcommit 6084aba70fb3c2eaa761c3d5ab6a5214e234006b[m
+Author: jean <jean.nieto@jove.com>
+Date:   Sun Jun 29 16:41:02 2025 -0400
+
+    save card implemented
+
+[33mcommit 3bc78602b25d62236d80ec4ae29b9cf80c1907d2[m
+Author: jean <jean.nieto@jove.com>
+Date:   Fri Jun 27 01:43:32 2025 -0400
+
+    functional commit, implementing stripe
+
+[33mcommit 3ffaa0aff94dac7b7d6916a63b99135246aee080[m
+Author: jean <jean.nieto@jove.com>
+Date:   Thu Jun 26 02:34:33 2025 -0400
+
+    payment modal functional
+
+[33mcommit c77e2bb0c2d7828883252cd68b4993a64d7f9168[m
+Author: jean <jean.nieto@jove.com>
+Date:   Thu Jun 26 00:54:30 2025 -0400
+
+    functional commit
+
+[33mcommit 29d892e479739f49a12d96ca09410ae8b97a778f[m
+Author: jean <jean.nieto@jove.com>
+Date:   Wed Jun 25 22:24:48 2025 -0400
+
+    product crud functional
+
+[33mcommit f0663f5ddbd631fe5fe5e76545856a32c21d9b91[m
+Author: jean <jean.nieto@jove.com>
+Date:   Wed Jun 25 00:46:11 2025 -0400
+
+    functional commit
+
+[33mcommit c875418b6d97d2bb9b2d517dc07f19c3f7a283cc[m
+Author: jean <jean.nieto@jove.com>
+Date:   Tue Jun 24 23:57:15 2025 -0400
+
+    create product functional
+
+[33mcommit 114b48ecdd41487a8d5c7e56c8068d30b016f8ff[m
+Author: jean <jean.nieto@jove.com>
+Date:   Tue Jun 24 00:32:23 2025 -0400
+
+    functional commit, postgres databases
+
+[33mcommit bef5167d6f1bc388661fc3bc344a162d4829debc[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon Jun 23 20:13:33 2025 -0400
+
+    functional commit
+
+[33mcommit f257ba5cfa2f9ef6c1eeb6b3029f43bd8928a82a[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Mon Jun 23 13:33:55 2025 -0400
+
+    user configuration functional
+
+[33mcommit 7e383c4803c682756c45b5eba1a56aacec82bd25[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun Jun 22 20:37:16 2025 -0400
+
+    auction get integration functional
+
+[33mcommit 2f6987df2970f82cc465e92562a72d4f31deb924[m
+Author: jean <jean.nieto@jove.com>
+Date:   Thu Jun 19 23:43:03 2025 -0400
+
+    functional commit
+
+[33mcommit 5575591d9bf6028e9783050dfdbf16884865df61[m
+Author: jean <jean.nieto@jove.com>
+Date:   Thu Jun 19 20:06:53 2025 -0400
+
+    change password fixed
+
+[33mcommit ee921ec29569e797445464fee94050a106872e5d[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Wed Jun 18 19:27:28 2025 -0400
+
+    functional register user modal
+
+[33mcommit 7938b6845107096b5e7a0119a0fe14c1f99aa1c3[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Tue Jun 17 23:54:19 2025 -0400
+
+    product get integrations
+
+[33mcommit 57fb2585fdcd5c2c1b5a07157ff4c8fd015b16ee[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun Jun 15 11:30:06 2025 -0400
+
+    fixed integracion categorias
+
+[33mcommit e5c6dff8603da5f6c344daf2241d6220cb851b32[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sat Jun 14 08:15:37 2025 -0400
+
+    integration test
+
+[33mcommit 88d3ac13db7de74edb8336f2900f23a4a4a3af92[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu Jun 12 12:33:56 2025 -0400
+
+    auction form corections implemented and functionals
+
+[33mcommit 1d5237d0ef40c59f3cb392a02518a5f956d26080[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu Jun 12 10:38:06 2025 -0400
+
+    login fixed
+
+[33mcommit 8c347ea35a6e8be70e59c5f0bcaf55043cfbf071[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu Jun 12 09:18:15 2025 -0400
+
+    navbar bug fixed
+
+[33mcommit 873644080240ea8425f1b058816e95acad5273ea[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon Jun 2 16:18:20 2025 -0400
+
+    sidebar issue fixed
+
+[33mcommit c87e22fcef0a315b0f2a5561da8b821926072b7a[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon Jun 2 11:02:16 2025 -0400
+
+    auction modal added
+
+[33mcommit a0e06d3afc53a6311292eb80c5918a4ce32a0dfe[m
+Author: jean <jean.nieto@jove.com>
+Date:   Thu May 22 19:47:05 2025 -0400
+
+    axios and docker fixed
+
+[33mcommit 957f0c440378c1d200e350d54dab38f651e73dcb[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu May 22 18:23:51 2025 -0400
+
+    functional commit
+
+[33mcommit 7edc311a8b07639d17b26fc277386ef137e25c27[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu May 22 13:41:41 2025 -0400
+
+    functional commit before intagrating
+
+[33mcommit e830164430a869b1003b6da6eed511029c5e4627[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu May 22 09:13:23 2025 -0400
+
+    functional commit
+
+[33mcommit 17b1c6486874fd0e66d4125bc0692cb1563e97c5[m
+Author: jean <jean.nieto@jove.com>
+Date:   Wed May 21 00:42:17 2025 -0400
+
+    docker bug fixed
+
+[33mcommit 8dd42820b16abd452581744f3efb86c915ae5f75[m
+Author: jean <jean.nieto@jove.com>
+Date:   Tue May 20 23:42:12 2025 -0400
+
+    fix: docker compose deploy
+
+[33mcommit 1b515f4e8fd7f78ca1abadc6c6ac57afcf58677c[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon May 19 23:42:21 2025 -0400
+
+    partial login
+
+[33mcommit 21b167a1b536ed3f37017906408e21cdc2bd13ec[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Mon May 19 18:19:42 2025 -0400
+
+    notifications
+
+[33mcommit 1106db9e6ba5dba573ab92c53ec5ed4edf9a3c46[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 18 23:57:25 2025 -0400
+
+    auction module functioning
+
+[33mcommit f74520cbc5b04cb3986c8daeb19e72087b1e631f[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 18 18:16:50 2025 -0400
+
+    create auction functional
+
+[33mcommit e2ccec1e677b26b24dc5cdf0df03e83f63ca8c1d[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 18 02:47:12 2025 -0400
+
+    bug fixed create auction
+
+[33mcommit 0a0b5fa49e27f6e2281497752f4f0cdec05a9aec[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 18 02:23:03 2025 -0400
+
+    functional commit
+
+[33mcommit b03d78741c9644fbdafc552faa340edfa91abbb2[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 18 02:22:49 2025 -0400
+
+    functional commit
+
+[33mcommit dbef2e316ea11706d188c2c3b34ea55faf8466a5[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu May 15 19:00:23 2025 -0400
+
+    notifications
+
+[33mcommit 2ed56d1a9e1deb91325cf4d9b2f47401b3966dfb[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Tue May 13 20:56:05 2025 -0400
+
+    product module done with test data
+
+[33mcommit 68873ba4f3303af01435d9549b8144a038a1d7a6[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon May 12 17:38:44 2025 -0400
+
+    build: fix next build
+
+[33mcommit 6ecafd07c1b048ab5aa0c1db7d3a9ace8db5cfd4[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Mon May 12 13:54:23 2025 -0400
+
+    docker implemented
+
+[33mcommit a9095209faca8305fd83199aa1c63edd477fddc7[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon May 12 12:36:14 2025 -0400
+
+    build: add docker configuration
+
+[33mcommit 2c5a0fc8a0aa9c727aa2c5cb5f19b29c1a9c88ae[m
+Author: jean <jean.nieto@jove.com>
+Date:   Mon May 12 01:47:29 2025 -0400
+
+    Edit product implemented
+
+[33mcommit 2aaae396f8304cfa9224d44db8fa26e36d39cd94[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Sun May 11 21:35:45 2025 -0400
+
+    initial commit
+
+[33mcommit 2ec4fc94dcd2f678e0ce62e647c97898f62e8290[m
+Author: Silvana <silvanapenarondon@gmail.com>
+Date:   Thu May 8 20:10:52 2025 -0400
+
+    Initial commit from Create Next App
