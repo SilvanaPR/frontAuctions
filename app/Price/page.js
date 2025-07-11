@@ -45,10 +45,12 @@ export default function Price() {
     const handleConfirmSubmit = () => {
         if (pendingSubmitData) {
 
-            if (context === "create") {
-                // CREAR RECLAMO
+            if (modalContext === "create") {
+
+            } else if (modalContext === "report") {
+
             } else {
-                // RESOLVER RECLAMO
+
             }
 
             setShowConfirm(false);
@@ -56,6 +58,7 @@ export default function Price() {
             setPendingSubmitData(null);
         }
     };
+
 
     const handleCancelSubmit = () => {
         setShowConfirm(false);
@@ -113,23 +116,33 @@ export default function Price() {
                                                 href={`/Price/${auction.id}?context=report`}
                                                 className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
                                             >
-
                                                 <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h6m0-6v6m0-6 5.419-3.87A1 1 0 0 1 18 5.942v12.114a1 1 0 0 1-1.581.814L11 15m7 0a3 3 0 0 0 0-6M6 15h3v5H6v-5Z" />
                                                 </svg>
-
                                             </Link>
 
                                             <Link
                                                 href={`/Price/${auction.id}?context=claim`}
-                                                className="block p-1 text-sm text-gray-700 hover:text-black hover:font-medium"
+                                                className="block p-1 text-sm text-gray-500 hover:text-black hover:font-medium"
                                             >
+                                                <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16v-5.5A3.5 3.5 0 0 0 7.5 7m3.5 9H4v-5.5A3.5 3.5 0 0 1 7.5 7m3.5 9v4M7.5 7H14m0 0V4h2.5M14 7v3m-3.5 6H20v-6a3 3 0 0 0-3-3m-2 9v4m-8-6.5h1" />
+                                                </svg>
+                                            </Link>
 
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedClaim(auction);
+                                                    setModalContext("reportSend");
+                                                    setShowConfirm(true);
+                                                }}
+                                                className="text-gray-500 hover:text-gray-900"
+                                            >
                                                 <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5" />
                                                 </svg>
 
-                                            </Link>
+                                            </button>
                                         </td>
                                     </tr>
 
@@ -156,7 +169,7 @@ export default function Price() {
 
                 {showConfirm && (
                     <ConfirmationModal
-                        message="¿Confirmas los cambios en los permisos?"
+                        message={"¿Confirmas que el premio ha sido recibido?"}
                         onCancel={handleCancelSubmit}
                         onConfirm={handleConfirmSubmit}
                         loading={false}
